@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Virtual env
+venv/
+.env/
+
+# Models (BIG FILES)
+models/*.joblib
+
+# Data (optional)
+data/
+*.csv
+
+carinfo
