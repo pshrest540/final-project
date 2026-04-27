@@ -66,3 +66,15 @@ After both services are live:
 5. Open vehicle details and confirm the prediction history appears.
 
 If the API fails while loading model files, check the deploy logs for a scikit-learn model persistence warning or missing artifact path. The current deployment pin uses `scikit-learn==1.6.1`, matching the version recorded in the existing joblib files.
+
+## Render Stuck On Loading
+
+Check the API service first:
+
+1. Open `https://YOUR-API-SERVICE.onrender.com/health`.
+2. If it does not return JSON, open the Render logs for `finalproject-api`.
+3. Confirm `DATABASE_URL` is set on `finalproject-api`, not only on the Streamlit service.
+4. Use the Supabase **Session pooler** connection string if the direct database URL hangs or times out.
+5. Open `https://YOUR-API-SERVICE.onrender.com/db/health` after `/health` works to verify Supabase.
+
+The API intentionally does not create tables or load model files during Render startup. This keeps `/health` fast. Run `supabase/schema.sql` in Supabase SQL Editor, then use `/predict` to trigger lazy model loading.

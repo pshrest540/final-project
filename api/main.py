@@ -1,6 +1,6 @@
 
 #Run with: uvicorn api.main:app --reload
-
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,14 +25,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load models and create DB tables at startup
+# Keep startup fast so Render can mark the service healthy quickly.
 @app.on_event("startup")
 def startup_event():
-    try:
-        Base.metadata.create_all(bind=engine)
-    except Exception as e:
-        print(f"WARNING: Could not create DB tables at startup: {e}")
-    load_all_models()
+    if os.getenv("CREATE_DB_TABLES_ON_STARTUP", "false").lower() == "true":
+        try:
+            Base.metadata.create_all(bind=engine)
+        except Exception as e:
+            print(f"WARNING: Could not create DB tables at startup: {e}")
+
+    if os.getenv("LOAD_MODELS_ON_STARTUP", "false").lower() == "true":
+        load_all_models()
 
 # Routers
 app.include_router(predict.router)

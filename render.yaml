@@ -13,6 +13,12 @@ services:
         sync: false
       - key: JWT_SECRET_KEY
         generateValue: true
+      - key: DB_CONNECT_TIMEOUT
+        value: 10
+      - key: CREATE_DB_TABLES_ON_STARTUP
+        value: false
+      - key: LOAD_MODELS_ON_STARTUP
+        value: false
 
   - type: web
     name: finalproject-streamlit

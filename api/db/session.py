@@ -1,4 +1,5 @@
 import os
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -14,9 +15,18 @@ if not DATABASE_URL:
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
+parsed_url = urlparse(DATABASE_URL)
+if parsed_url.hostname not in {"localhost", "127.0.0.1"}:
+    query = dict(parse_qsl(parsed_url.query, keep_blank_values=True))
+    query.setdefault("sslmode", "require")
+    DATABASE_URL = urlunparse(parsed_url._replace(query=urlencode(query)))
+
+DB_CONNECT_TIMEOUT = int(os.getenv("DB_CONNECT_TIMEOUT", "10"))
+
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
+    connect_args={"connect_timeout": DB_CONNECT_TIMEOUT},
 )
 
 SessionLocal = sessionmaker(

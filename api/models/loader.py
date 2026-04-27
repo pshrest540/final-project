@@ -25,6 +25,8 @@ def _limit_prediction_workers(bundle: dict) -> dict:
 
 def get_models() -> dict:
     """Return the loaded models dict. Call after startup."""
+    if not _models:
+        load_all_models()
     return _models
 
 def load_all_models():
