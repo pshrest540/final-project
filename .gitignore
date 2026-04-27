@@ -7,6 +7,7 @@ __pycache__/
 
 # Virtual env
 venv/
+.venv/
 .env/
 
 # Models (BIG FILES)
@@ -16,4 +17,16 @@ models/*.joblib
 data/
 *.csv
 
-carinfo
+# Deployment runtime artifacts. The hosted API needs these files at startup.
+!models/
+!models/*.joblib
+!data/
+data/*
+!data/processed/
+data/processed/*
+!data/processed/*.csv
+
+*carinfo*
+.env
+.claude/
+.claude

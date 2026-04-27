@@ -9,6 +9,20 @@ import joblib
 
 _models: dict = {}
 
+
+def _limit_prediction_workers(bundle: dict) -> dict:
+    """
+    Keep hosted inference from trying to use every available CPU.
+    The saved bundles contain MultiOutputRegressor -> RandomForestRegressor.
+    """
+    model = bundle.get("model")
+    if hasattr(model, "n_jobs"):
+        model.n_jobs = 1
+    for estimator in getattr(model, "estimators_", []):
+        if hasattr(estimator, "n_jobs"):
+            estimator.n_jobs = 1
+    return bundle
+
 def get_models() -> dict:
     """Return the loaded models dict. Call after startup."""
     return _models
@@ -25,6 +39,6 @@ def load_all_models():
                 f"Model not found: {path}\n"
                 f"Run `python train/train_models.py` first to generate model files."
             )
-        _models[system] = joblib.load(path)
+        _models[system] = _limit_prediction_workers(joblib.load(path))
 
     print(f"[startup] Loaded {len(_models)} models: {list(_models.keys())}")

@@ -1,12 +1,16 @@
-"""
-Predictive Vehicle Maintenance - FastAPI Backend
-Run with: uvicorn api.main:app --reload
-"""
+
+#Run with: uvicorn api.main:app --reload
+
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import predict, brands, retrain
 from api.models.loader import load_all_models
+from api.routers import dbtest
+import api.db.models  # noqa: F401 — registers all ORM models with Base
+from api.db.session import engine, Base
+from api.routers.auth import router as auth_router
+from api.routers.vehicles import router as vehicles_router
 
 app = FastAPI(
     title="Vehicle Maintenance Predictor API",
@@ -16,20 +20,27 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten this in production
+    allow_origins=["*"],  
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load models once at startup
+# Load models and create DB tables at startup
 @app.on_event("startup")
 def startup_event():
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"WARNING: Could not create DB tables at startup: {e}")
     load_all_models()
 
 # Routers
 app.include_router(predict.router)
 app.include_router(brands.router)
 app.include_router(retrain.router)
+app.include_router(dbtest.router)
+app.include_router(auth_router)
+app.include_router(vehicles_router)
 
 @app.get("/health", tags=["Health"])
 def health_check():

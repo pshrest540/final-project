@@ -1,0 +1,246 @@
+brand,model,year,error
+Toyota,Camry,2007,504 Server Error: Gateway Time-out for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Toyota&model=Camry&modelYear=2007
+Toyota,Tacoma,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Toyota&model=Tacoma&modelYear=2010
+Honda,Civic,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Civic&modelYear=2023
+Honda,Civic,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Civic&modelYear=2024
+Honda,Civic,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Civic&modelYear=2025
+Honda,Accord,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Accord&modelYear=2023
+Honda,Accord,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Accord&modelYear=2024
+Honda,Accord,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Accord&modelYear=2025
+Honda,Pilot,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Pilot&modelYear=2000
+Honda,Pilot,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Pilot&modelYear=2001
+Honda,Pilot,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Pilot&modelYear=2002
+Honda,Ridgeline,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Ridgeline&modelYear=2000
+Honda,Ridgeline,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Ridgeline&modelYear=2001
+Honda,Ridgeline,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Honda&model=Ridgeline&modelYear=2002
+Subaru,Crosstrek,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2000
+Subaru,Crosstrek,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2001
+Subaru,Crosstrek,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2002
+Subaru,Crosstrek,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2003
+Subaru,Crosstrek,2004,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2004
+Subaru,Crosstrek,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2005
+Subaru,Crosstrek,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2006
+Subaru,Crosstrek,2007,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2007
+Subaru,Crosstrek,2008,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2008
+Subaru,Crosstrek,2009,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2009
+Subaru,Crosstrek,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2010
+Subaru,Crosstrek,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2011
+Subaru,Crosstrek,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2014
+Subaru,Crosstrek,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Crosstrek&modelYear=2015
+Subaru,WRX,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=WRX&modelYear=2000
+Subaru,WRX,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=WRX&modelYear=2001
+Subaru,Ascent,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2000
+Subaru,Ascent,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2001
+Subaru,Ascent,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2002
+Subaru,Ascent,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2003
+Subaru,Ascent,2004,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2004
+Subaru,Ascent,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2005
+Subaru,Ascent,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2006
+Subaru,Ascent,2007,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2007
+Subaru,Ascent,2008,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2008
+Subaru,Ascent,2009,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2009
+Subaru,Ascent,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2010
+Subaru,Ascent,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2011
+Subaru,Ascent,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2012
+Subaru,Ascent,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2013
+Subaru,Ascent,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2014
+Subaru,Ascent,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2015
+Subaru,Ascent,2016,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2016
+Subaru,Ascent,2017,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2017
+Subaru,Ascent,2018,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Subaru&model=Ascent&modelYear=2018
+Nissan,Rogue,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Rogue&modelYear=2000
+Nissan,Rogue,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Rogue&modelYear=2001
+Nissan,Rogue,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Rogue&modelYear=2002
+Nissan,Rogue,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Rogue&modelYear=2003
+Nissan,Rogue,2004,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Rogue&modelYear=2004
+Nissan,Rogue,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Rogue&modelYear=2005
+Nissan,Rogue,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Rogue&modelYear=2006
+Nissan,Frontier,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2005
+Nissan,Frontier,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2006
+Nissan,Frontier,2007,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2007
+Nissan,Frontier,2008,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2008
+Nissan,Frontier,2009,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2009
+Nissan,Frontier,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2010
+Nissan,Frontier,2020,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2020
+Nissan,Frontier,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2023
+Nissan,Frontier,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Nissan&model=Frontier&modelYear=2024
+BMW,3 Series,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=3+Series&modelYear=2011
+BMW,3 Series,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=3+Series&modelYear=2012
+BMW,3 Series,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=3+Series&modelYear=2013
+BMW,3 Series,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=3+Series&modelYear=2014
+BMW,3 Series,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=3+Series&modelYear=2015
+BMW,3 Series,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=3+Series&modelYear=2023
+BMW,3 Series,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=3+Series&modelYear=2024
+BMW,3 Series,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=3+Series&modelYear=2025
+BMW,5 Series,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2002
+BMW,5 Series,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2003
+BMW,5 Series,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2011
+BMW,5 Series,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2012
+BMW,5 Series,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2013
+BMW,5 Series,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2014
+BMW,5 Series,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2015
+BMW,5 Series,2017,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2017
+BMW,5 Series,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2023
+BMW,5 Series,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2024
+BMW,5 Series,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=5+Series&modelYear=2025
+BMW,X3,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2000
+BMW,X3,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2001
+BMW,X3,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2002
+BMW,X3,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2003
+BMW,X3,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2011
+BMW,X3,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2012
+BMW,X3,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2013
+BMW,X3,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2014
+BMW,X3,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X3&modelYear=2015
+BMW,X5,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X5&modelYear=2012
+BMW,X5,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X5&modelYear=2013
+BMW,X5,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X5&modelYear=2014
+BMW,X5,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=X5&modelYear=2015
+BMW,7 Series,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2011
+BMW,7 Series,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2012
+BMW,7 Series,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2013
+BMW,7 Series,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2014
+BMW,7 Series,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2015
+BMW,7 Series,2016,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2016
+BMW,7 Series,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2023
+BMW,7 Series,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2024
+BMW,7 Series,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=BMW&model=7+Series&modelYear=2025
+Ford,F-150,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2010
+Ford,F-150,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2011
+Ford,F-150,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2012
+Ford,F-150,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2013
+Ford,F-150,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2014
+Ford,F-150,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2015
+Ford,F-150,2016,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2016
+Ford,F-150,2017,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2017
+Ford,F-150,2018,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2018
+Ford,F-150,2019,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2019
+Ford,F-150,2020,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2020
+Ford,F-150,2021,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2021
+Ford,F-150,2022,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2022
+Ford,F-150,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2023
+Ford,F-150,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2024
+Ford,F-150,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=F-150&modelYear=2025
+Ford,Mustang,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=Mustang&modelYear=2023
+Ford,Focus,2019,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=Focus&modelYear=2019
+Ford,Focus,2020,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=Focus&modelYear=2020
+Ford,Focus,2021,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=Focus&modelYear=2021
+Ford,Focus,2022,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=Focus&modelYear=2022
+Ford,Focus,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=Focus&modelYear=2023
+Ford,Focus,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=Focus&modelYear=2024
+Ford,Focus,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=Focus&modelYear=2025
+Ford,EcoSport,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2000
+Ford,EcoSport,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2001
+Ford,EcoSport,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2002
+Ford,EcoSport,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2003
+Ford,EcoSport,2004,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2004
+Ford,EcoSport,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2005
+Ford,EcoSport,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2006
+Ford,EcoSport,2007,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2007
+Ford,EcoSport,2008,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2008
+Ford,EcoSport,2009,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2009
+Ford,EcoSport,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2010
+Ford,EcoSport,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2011
+Ford,EcoSport,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2012
+Ford,EcoSport,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2013
+Ford,EcoSport,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2014
+Ford,EcoSport,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2015
+Ford,EcoSport,2016,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2016
+Ford,EcoSport,2017,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2017
+Ford,EcoSport,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2023
+Ford,EcoSport,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2024
+Ford,EcoSport,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Ford&model=EcoSport&modelYear=2025
+Chevrolet,Silverado,2009,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2009
+Chevrolet,Silverado,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2010
+Chevrolet,Silverado,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2011
+Chevrolet,Silverado,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2012
+Chevrolet,Silverado,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2013
+Chevrolet,Silverado,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2014
+Chevrolet,Silverado,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2015
+Chevrolet,Silverado,2016,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2016
+Chevrolet,Silverado,2017,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2017
+Chevrolet,Silverado,2018,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2018
+Chevrolet,Silverado,2019,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2019
+Chevrolet,Silverado,2020,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2020
+Chevrolet,Silverado,2021,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2021
+Chevrolet,Silverado,2022,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2022
+Chevrolet,Silverado,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2023
+Chevrolet,Silverado,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2024
+Chevrolet,Silverado,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Silverado&modelYear=2025
+Chevrolet,Trax,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2000
+Chevrolet,Trax,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2001
+Chevrolet,Trax,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2002
+Chevrolet,Trax,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2003
+Chevrolet,Trax,2004,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2004
+Chevrolet,Trax,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2005
+Chevrolet,Trax,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2006
+Chevrolet,Trax,2007,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2007
+Chevrolet,Trax,2008,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2008
+Chevrolet,Trax,2009,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2009
+Chevrolet,Trax,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2010
+Chevrolet,Trax,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2011
+Chevrolet,Trax,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Trax&modelYear=2012
+Chevrolet,Cruze,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2000
+Chevrolet,Cruze,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2001
+Chevrolet,Cruze,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2002
+Chevrolet,Cruze,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2003
+Chevrolet,Cruze,2004,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2004
+Chevrolet,Cruze,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2005
+Chevrolet,Cruze,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2006
+Chevrolet,Cruze,2007,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2007
+Chevrolet,Cruze,2008,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2008
+Chevrolet,Cruze,2020,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2020
+Chevrolet,Cruze,2021,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2021
+Chevrolet,Cruze,2022,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2022
+Chevrolet,Cruze,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2023
+Chevrolet,Cruze,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2024
+Chevrolet,Cruze,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Chevrolet&model=Cruze&modelYear=2025
+Hyundai,Ioniq,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2000
+Hyundai,Ioniq,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2001
+Hyundai,Ioniq,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2002
+Hyundai,Ioniq,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2003
+Hyundai,Ioniq,2004,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2004
+Hyundai,Ioniq,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2005
+Hyundai,Ioniq,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2006
+Hyundai,Ioniq,2007,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2007
+Hyundai,Ioniq,2008,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2008
+Hyundai,Ioniq,2009,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2009
+Hyundai,Ioniq,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2010
+Hyundai,Ioniq,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2011
+Hyundai,Ioniq,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2012
+Hyundai,Ioniq,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2013
+Hyundai,Ioniq,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2014
+Hyundai,Ioniq,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2015
+Hyundai,Ioniq,2016,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2016
+Hyundai,Ioniq,2017,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2017
+Hyundai,Ioniq,2018,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2018
+Hyundai,Ioniq,2019,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2019
+Hyundai,Ioniq,2021,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2021
+Hyundai,Ioniq,2022,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2022
+Hyundai,Ioniq,2023,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2023
+Hyundai,Ioniq,2024,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2024
+Hyundai,Ioniq,2025,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Ioniq&modelYear=2025
+Hyundai,Palisade,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2000
+Hyundai,Palisade,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2001
+Hyundai,Palisade,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2002
+Hyundai,Palisade,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2003
+Hyundai,Palisade,2004,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2004
+Hyundai,Palisade,2005,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2005
+Hyundai,Palisade,2006,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2006
+Hyundai,Palisade,2007,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2007
+Hyundai,Palisade,2008,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2008
+Hyundai,Palisade,2009,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2009
+Hyundai,Palisade,2010,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2010
+Hyundai,Palisade,2011,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2011
+Hyundai,Palisade,2012,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2012
+Hyundai,Palisade,2013,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2013
+Hyundai,Palisade,2014,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2014
+Hyundai,Palisade,2015,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2015
+Hyundai,Palisade,2016,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2016
+Hyundai,Palisade,2017,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2017
+Hyundai,Palisade,2018,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2018
+Hyundai,Palisade,2019,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Palisade&modelYear=2019
+Hyundai,Tucson,2000,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Tucson&modelYear=2000
+Hyundai,Tucson,2001,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Tucson&modelYear=2001
+Hyundai,Tucson,2002,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Tucson&modelYear=2002
+Hyundai,Tucson,2003,400 Client Error: Bad Request for url: https://api.nhtsa.gov/complaints/complaintsByVehicle?make=Hyundai&model=Tucson&modelYear=2003

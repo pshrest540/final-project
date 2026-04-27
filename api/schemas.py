@@ -3,7 +3,8 @@ Pydantic schemas for request validation and response serialization.
 FastAPI uses these to auto-validate inputs and generate API docs.
 """
 
-from pydantic import BaseModel, Field
+from datetime import datetime
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 
 
@@ -31,6 +32,7 @@ class PredictRequest(BaseModel):
                                 description="Aggressive driving habits")
     idle_scale:   float = Field(..., ge=0.0, le=1.0, example=0.3,
                                 description="Extended idling frequency")
+    vehicle_id:   Optional[str] = None
 
 
 # ── Component scores ───────────────────────────────────────────────────────────
@@ -87,3 +89,67 @@ class RetrainResponse(BaseModel):
     status:  str
     message: str
     results: Optional[dict] = None
+
+
+# ── Auth schemas ───────────────────────────────────────────────────────────────
+
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    full_name: Optional[str] = None
+    account_type: Optional[str] = "personal"
+    business_name: Optional[str] = None
+
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+
+class UserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    user_id: str
+    email: str
+    account_type: str
+    business_name: Optional[str] = None
+    full_name: Optional[str] = None
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserOut
+
+
+# ── Vehicle schemas ────────────────────────────────────────────────────────────
+
+class VehicleCreate(BaseModel):
+    brand: str
+    model: str
+    year: int             = Field(..., ge=1990, le=2025)
+    current_mileage: int  = Field(..., ge=0)
+    vin: Optional[str]    = None
+
+
+class VehicleOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    vehicle_id:       str
+    brand:            str
+    model:            str
+    year:             int
+    current_mileage:  int
+    vin:              Optional[str]      = None
+    added_on:         Optional[datetime] = None
+
+
+class PredictionOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    prediction_id:      str
+    overall_score:      float
+    engine_score:       float
+    drivetrain_score:   float
+    electrical_score:   float
+    calculated_at:      Optional[datetime] = None

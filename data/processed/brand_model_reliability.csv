@@ -1,0 +1,42 @@
+brand,model,type,elec_score,drive_score,engine_score
+Toyota,Corolla,Sedan,9,9,10
+Toyota,Camry,Sedan,8,9,9
+Toyota,RAV4,SUV,8,8,9
+Toyota,4Runner,SUV,7,10,9
+Toyota,Tacoma,Truck,8,9,9
+Honda,Civic,Sedan,8,8,9
+Honda,Accord,Sedan,8,7,9
+Honda,CR-V,SUV,8,8,8
+Honda,Pilot,SUV,7,6,8
+Honda,Ridgeline,Truck,8,7,8
+Subaru,Forester,SUV,8,7,7
+Subaru,Outback,SUV,7,6,7
+Subaru,Crosstrek,SUV,8,7,8
+Subaru,Impreza,Sedan,8,7,8
+Subaru,WRX,Sedan,7,6,6
+Subaru,Ascent,SUV,6,5,6
+Nissan,Frontier,Truck,7,9,9
+Nissan,Pathfinder,SUV,7,7,8
+Nissan,Altima,Sedan,7,4,7
+Nissan,Sentra,Sedan,7,5,7
+Nissan,Rogue,SUV,6,5,6
+BMW,3 Series,Sedan,4,7,7
+BMW,5 Series,Sedan,4,6,7
+BMW,X3,SUV,5,7,7
+BMW,X5,SUV,3,6,6
+BMW,7 Series,Sedan,2,5,6
+Ford,F-150,Truck,6,8,7
+Ford,Mustang,Coupe,7,7,8
+Ford,Explorer,SUV,4,5,5
+Ford,Focus,Sedan,6,4,6
+Ford,EcoSport,SUV,4,4,3
+Chevrolet,Silverado,Truck,5,7,6
+Chevrolet,Tahoe,SUV,6,7,6
+Chevrolet,Trax,SUV,6,6,6
+Chevrolet,Malibu,Sedan,5,5,5
+Chevrolet,Cruze,Sedan,4,4,4
+Hyundai,Ioniq,Sedan,9,8,8
+Hyundai,Palisade,SUV,7,7,7
+Hyundai,Tucson,SUV,7,7,6
+Hyundai,Sonata,Sedan,7,7,6
+Hyundai,Elantra,Sedan,7,7,7

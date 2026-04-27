@@ -1,6 +1,7 @@
 
 #Run with: streamlit run app/Vehicle_Input.py
 
+import os
 import streamlit as st
 import requests
 
@@ -11,7 +12,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-API_BASE = "http://localhost:8000"
+API_BASE = os.environ.get("API_BASE", "http://localhost:8000")
+
+if "token" not in st.session_state:
+    st.switch_page("pages/Login.py")
 
 st.markdown("""
 <style>
@@ -49,6 +53,25 @@ def fetch_brands():
     except Exception:
         return None
 
+_, _hdr_r = st.columns([3, 3])
+with _hdr_r:
+    _user = st.session_state.get("user", {})
+    _email = _user.get("email", "") if isinstance(_user, dict) else ""
+    st.markdown(
+        f'<p style="text-align:right;font-family:\'Share Tech Mono\',monospace;'
+        f'font-size:0.7rem;color:#5a7a9a;margin:0">{_email}</p>',
+        unsafe_allow_html=True,
+    )
+    _btn_h, _btn_lo = st.columns(2)
+    with _btn_h:
+        if st.button("← HOME", key="back_home"):
+            st.switch_page("pages/Home.py")
+    with _btn_lo:
+        if st.button("LOGOUT", key="logout"):
+            st.session_state.pop("token", None)
+            st.session_state.pop("user", None)
+            st.switch_page("pages/Login.py")
+
 st.markdown("""
 <div class="hero">
     <div class="hero-title">name=MIA</div>
@@ -77,6 +100,15 @@ if not brands_data:
 brand_map  = {b["brand"]: {m["model"]: m for m in b["models"]} for b in brands_data}
 brand_list = sorted(brand_map.keys())
 
+# Pre-fill from selected_vehicle if one was chosen on the dashboard
+sv = st.session_state.get("selected_vehicle")
+if sv:
+    _sv_brand = sv.get("brand")
+    if _sv_brand in brand_list and st.session_state.get("brand") not in brand_list:
+        st.session_state["brand"] = _sv_brand
+sv_year    = int(sv.get("year",            2015))  if sv else 2015
+sv_mileage = int(sv.get("current_mileage", 85000)) if sv else 85000
+
 left, right = st.columns([1, 1], gap="large")
 
 # ── LEFT col ──────────────────────────────────────────────────────────────────
@@ -87,15 +119,17 @@ with left:
     # Brand ONLY outside form — triggers rerun to update model list
     brand      = st.selectbox("Brand", brand_list, key="brand")
     model_list = sorted(brand_map[brand].keys())
+    _sv_model  = sv.get("model") if sv else None
+    _model_idx = model_list.index(_sv_model) if _sv_model and _sv_model in model_list else 0
 
     # Everything else inside form — no dimming on change
     with st.form("vehicle_form"):
-        model   = st.selectbox("Model", model_list)
+        model   = st.selectbox("Model", model_list, index=_model_idx)
         col_y, col_m = st.columns(2)
         with col_y:
-            year    = st.number_input("Year",    min_value=2000, max_value=2025, value=2015, step=1)
+            year    = st.number_input("Year",    min_value=2000, max_value=2025, value=sv_year,    step=1)
         with col_m:
-            mileage = st.number_input("Mileage", min_value=0, max_value=400000, value=85000, step=1000)
+            mileage = st.number_input("Mileage", min_value=0, max_value=400000, value=sv_mileage, step=1000)
 
         st.markdown('</div>', unsafe_allow_html=True)  # close input-card visually
 
@@ -131,6 +165,8 @@ if submitted:
         "stop_scale": stop_scale,   "temp_scale": temp_scale,
         "habit_scale": habit_scale, "idle_scale": idle_scale,
     }
+    if sv and "vehicle_id" in sv:
+        payload["vehicle_id"] = sv["vehicle_id"]
     with st.spinner("Running diagnostics..."):
         try:
             r = requests.post(f"{API_BASE}/predict", json=payload, timeout=10)
