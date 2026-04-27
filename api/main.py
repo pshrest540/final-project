@@ -45,6 +45,15 @@ app.include_router(dbtest.router)
 app.include_router(auth_router)
 app.include_router(vehicles_router)
 
+@app.get("/", tags=["Health"])
+def root():
+    return {
+        "status": "ok",
+        "service": "MIA Vehicle Maintenance Predictor API",
+        "health": "/health",
+        "docs": "/docs",
+    }
+
 @app.get("/health", tags=["Health"])
 def health_check():
     return {"status": "ok", "message": "Vehicle Maintenance API is running."}

@@ -10,7 +10,8 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-API_BASE = os.environ.get("API_BASE", "http://localhost:8000")
+API_BASE = os.environ.get("API_BASE", "http://localhost:8000").rstrip("/")
+API_TIMEOUT = int(os.environ.get("API_TIMEOUT", "120"))
 
 if "token" in st.session_state:
     st.switch_page("pages/Home.py")
@@ -57,7 +58,7 @@ if st.button("LOGIN"):
             resp = requests.post(
                 f"{API_BASE}/auth/login",
                 json={"email": email, "password": password},
-                timeout=10,
+                timeout=API_TIMEOUT,
             )
             if resp.status_code == 200:
                 data = resp.json()

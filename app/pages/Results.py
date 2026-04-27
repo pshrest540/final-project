@@ -1,10 +1,5 @@
-"""
-Predictive Vehicle Maintenance - Results Page
-"""
-
 import streamlit as st
 import plotly.graph_objects as go
-import numpy as np
 
 st.set_page_config(
     page_title="Vehicle Health Results",
@@ -24,46 +19,76 @@ el = results["electrical"]
 en = results["engine"]
 overall = results["overall_avg"]
 
-st.markdown("""
+_user   = st.session_state.get("user", {})
+_is_biz = isinstance(_user, dict) and _user.get("account_type") == "business"
+
+# ── Theme tokens ──────────────────────────────────────────────────────────────
+_bg      = "#f0f4f8"  if _is_biz else "#0a0e1a"
+_accent  = "#0066b3"  if _is_biz else "#00d4ff"
+_fg      = "#1a2a3a"  if _is_biz else "#c8d8e8"
+_fg2     = "#4a6a8a"  if _is_biz else "#5a7a9a"
+_fg3     = "#3a5a7a"  if _is_biz else "#3a5a7a"
+_border  = "#d0dce8"  if _is_biz else "#1e3a5f"
+_card_g  = "#ffffff"  if _is_biz else "linear-gradient(135deg,#0f1628 0%,#111827 100%)"
+_ov_g    = "linear-gradient(135deg,#ffffff 0%,#f0f4f8 100%)" if _is_biz else "linear-gradient(135deg,#0f1628 0%,#0d1f35 100%)"
+_bar_bg  = "#e4eef8"  if _is_biz else "#0d1526"
+_rec_bg  = "#f8fafc"  if _is_biz else "#0f1628"
+_top     = f"linear-gradient(90deg,transparent,{_accent},transparent)"
+_gauge_bg     = "#f0f4f8"  if _is_biz else "#0d1526"
+_gauge_border = "#c8d8e8"  if _is_biz else "#1e3a5f"
+_gauge_tick   = "#4a6a8a"  if _is_biz else "#3a5a7a"
+_gauge_font   = "#1a2a3a"  if _is_biz else "#c8d8e8"
+_gauge_steps  = [
+    {"range": [0,  40], "color": "#fff0f0" if _is_biz else "#1a0a0a"},
+    {"range": [40, 65], "color": "#fff9eb" if _is_biz else "#1a1500"},
+    {"range": [65, 100], "color": "#f0fff4" if _is_biz else "#0a1a0f"},
+]
+_comp_header_c = "#4a6a8a" if _is_biz else "#8aabcc"
+_btn_ghost_border = _border
+_btn_ghost_c  = _fg2
+_btn_ghost_hc = _accent
+
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
-html, body, [class*="css"] { font-family: 'Rajdhani', sans-serif; background-color: #0a0e1a; color: #c8d8e8; }
-.stApp { background: #0a0e1a; }
-#MainMenu, footer, header { visibility: hidden; }
-.block-container { padding-top: 1.5rem; padding-bottom: 2rem; }
-.overall-card { background: linear-gradient(135deg, #0f1628 0%, #0d1f35 100%); border: 1px solid #1e3a5f; border-radius: 16px; padding: 2rem 2.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
-.overall-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #00d4ff, transparent); }
-.overall-vehicle { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: #5a7a9a; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.3rem; }
-.overall-title { font-size: 2rem; font-weight: 700; color: #c8d8e8; letter-spacing: 0.05em; }
-.overall-score-wrap { text-align: right; }
-.overall-score { font-family: 'Share Tech Mono', monospace; font-size: 4rem; font-weight: 700; line-height: 1; }
-.overall-label { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: #5a7a9a; margin-top: 0.2rem; }
-.sys-card { background: linear-gradient(135deg, #0f1628 0%, #111827 100%); border: 1px solid #1e3a5f; border-radius: 12px; padding: 1.5rem; margin-bottom: 0.5rem; position: relative; overflow: hidden; }
-.sys-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
-.sys-card-engine::before { background: linear-gradient(90deg, transparent, #f59e0b, transparent); }
-.sys-card-drive::before  { background: linear-gradient(90deg, transparent, #00d4ff, transparent); }
-.sys-card-elec::before   { background: linear-gradient(90deg, transparent, #a78bfa, transparent); }
-.sys-title { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.3rem; }
-.sys-avg { font-size: 2.2rem; font-weight: 700; font-family: 'Share Tech Mono', monospace; line-height: 1; margin-bottom: 1rem; }
-.comp-row { margin-bottom: 0.8rem; }
-.comp-header { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.3rem; color: #8aabcc; }
-.comp-name { font-weight: 600; letter-spacing: 0.05em; }
-.comp-score { font-family: 'Share Tech Mono', monospace; }
-.comp-bar-bg { background: #0d1526; border-radius: 4px; height: 6px; overflow: hidden; border: 1px solid #1e3a5f; }
-.comp-bar-fill { height: 100%; border-radius: 4px; }
-.rec-card { background: #0f1628; border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem; border-left: 3px solid; display: flex; align-items: flex-start; gap: 0.8rem; }
-.rec-icon { font-size: 1.1rem; margin-top: 0.1rem; }
-.rec-system { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.2rem; }
-.rec-text { font-size: 0.9rem; color: #c8d8e8; line-height: 1.4; }
-.section-label { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: #00d4ff; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 1rem; }
-.stButton > button { background: transparent !important; border: 1px solid #1e3a5f !important; color: #5a7a9a !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.8rem !important; letter-spacing: 0.1em !important; border-radius: 8px !important; }
-.stButton > button:hover { border-color: #00d4ff !important; color: #00d4ff !important; }
+html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-color: {_bg}; color: {_fg}; }}
+.stApp {{ background: {_bg}; }}
+#MainMenu, footer, header {{ visibility: hidden; }}
+.block-container {{ padding-top: 1.5rem; padding-bottom: 2rem; }}
+.overall-card {{ background: {_ov_g}; border: 1px solid {_border}; border-radius: 16px; padding: 2rem 2.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }}
+.overall-card::before {{ content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: {_top}; }}
+.overall-vehicle {{ font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: {_fg2}; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.3rem; }}
+.overall-title {{ font-size: 2rem; font-weight: 700; color: {_fg}; letter-spacing: 0.05em; }}
+.overall-score-wrap {{ text-align: right; }}
+.overall-score {{ font-family: 'Share Tech Mono', monospace; font-size: 4rem; font-weight: 700; line-height: 1; }}
+.overall-label {{ font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: {_fg2}; margin-top: 0.2rem; }}
+.sys-card {{ background: {_card_g}; border: 1px solid {_border}; border-radius: 12px; padding: 1.5rem; margin-bottom: 0.5rem; position: relative; overflow: hidden; }}
+.sys-card::before {{ content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }}
+.sys-card-engine::before {{ background: linear-gradient(90deg, transparent, #f59e0b, transparent); }}
+.sys-card-drive::before  {{ background: linear-gradient(90deg, transparent, #00d4ff, transparent); }}
+.sys-card-elec::before   {{ background: linear-gradient(90deg, transparent, #a78bfa, transparent); }}
+.sys-title {{ font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.3rem; }}
+.sys-avg {{ font-size: 2.2rem; font-weight: 700; font-family: 'Share Tech Mono', monospace; line-height: 1; margin-bottom: 1rem; }}
+.comp-row {{ margin-bottom: 0.8rem; }}
+.comp-header {{ display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.3rem; color: {_comp_header_c}; }}
+.comp-name {{ font-weight: 600; letter-spacing: 0.05em; }}
+.comp-score {{ font-family: 'Share Tech Mono', monospace; }}
+.comp-bar-bg {{ background: {_bar_bg}; border-radius: 4px; height: 6px; overflow: hidden; border: 1px solid {_border}; }}
+.comp-bar-fill {{ height: 100%; border-radius: 4px; }}
+.rec-card {{ background: {_rec_bg}; border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem; border-left: 3px solid; display: flex; align-items: flex-start; gap: 0.8rem; }}
+.rec-icon {{ font-size: 1.1rem; margin-top: 0.1rem; }}
+.rec-system {{ font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.2rem; }}
+.rec-text {{ font-size: 0.9rem; color: {_fg}; line-height: 1.4; }}
+.section-label {{ font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: {_accent}; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 1rem; }}
+.stButton > button {{ background: transparent !important; border: 1px solid {_btn_ghost_border} !important; color: {_btn_ghost_c} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.8rem !important; letter-spacing: 0.1em !important; border-radius: 8px !important; }}
+.stButton > button:hover {{ border-color: {_btn_ghost_hc} !important; color: {_btn_ghost_hc} !important; }}
 </style>
 """, unsafe_allow_html=True)
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
 def score_color(s):
-    if s >= 65: return "#00ff88"
+    if s >= 65: return "#00c864"
     elif s >= 40: return "#f59e0b"
     else: return "#ef4444"
 
@@ -73,12 +98,9 @@ def status_text(s):
     else: return "SERVICE SOON"
 
 def bar_color(s):
-    if s >= 65: return "#00ff88"
-    elif s >= 40: return "#f59e0b"
-    else: return "#ef4444"
+    return score_color(s)
 
 def render_system_card(title, title_color, card_class, avg, avg_color, components):
-    """Render system card header and component bars as one self-contained block."""
     bars_html = ""
     for name, score in components:
         color = bar_color(score)
@@ -97,7 +119,7 @@ def render_system_card(title, title_color, card_class, avg, avg_color, component
     st.markdown(f"""
         <div class="sys-card {card_class}">
             <div class="sys-title" style="color:{title_color}">{title}</div>
-            <div class="sys-avg" style="color:{avg_color}">{avg:.0f}<span style="font-size:1rem;color:#3a5a7a">/100</span></div>
+            <div class="sys-avg" style="color:{avg_color}">{avg:.0f}<span style="font-size:1rem;color:{_fg3}">/100</span></div>
             {bars_html}
         </div>
     """, unsafe_allow_html=True)
@@ -108,23 +130,19 @@ def gauge_fig(value, color):
         value=value,
         number={"font": {"size": 36, "color": color, "family": "Share Tech Mono"}, "suffix": ""},
         gauge={
-            "axis": {"range": [0, 100], "tickcolor": "#1e3a5f", "tickwidth": 1,
-                     "tickfont": {"color": "#3a5a7a", "size": 10}},
+            "axis": {"range": [0, 100], "tickcolor": _gauge_border, "tickwidth": 1,
+                     "tickfont": {"color": _gauge_tick, "size": 10}},
             "bar":  {"color": color, "thickness": 0.25},
-            "bgcolor": "#0d1526",
-            "bordercolor": "#1e3a5f",
-            "steps": [
-                {"range": [0,  40], "color": "#1a0a0a"},
-                {"range": [40, 65], "color": "#1a1500"},
-                {"range": [65, 100], "color": "#0a1a0f"},
-            ],
+            "bgcolor": _gauge_bg,
+            "bordercolor": _gauge_border,
+            "steps": _gauge_steps,
             "threshold": {"line": {"color": color, "width": 2}, "thickness": 0.8, "value": value},
         },
     ))
     fig.update_layout(
         height=200, margin=dict(t=20, b=10, l=20, r=20),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font={"color": "#c8d8e8"},
+        font={"color": _gauge_font},
     )
     return fig
 
@@ -147,13 +165,11 @@ def get_recommendations(dt, el, en):
         elif score < 65:
             recs.append(("🟡", system, component, f"{component} showing wear. {msg}", "#f59e0b", color))
     if not recs:
-        recs.append(("🟢", "ALL SYSTEMS", "Overall", "Vehicle health looks great. Keep up with regular maintenance intervals.", "#00ff88", "#00ff88"))
+        recs.append(("🟢", "ALL SYSTEMS", "Overall", "Vehicle health looks great. Keep up with regular maintenance intervals.", "#00c864", "#00c864"))
     return recs
 
-# ══════════════════════════════════════════════════════════════════════════════
-# UI
-# ══════════════════════════════════════════════════════════════════════════════
 
+# ── UI ────────────────────────────────────────────────────────────────────────
 if st.button("← NEW ANALYSIS"):
     st.switch_page("Vehicle_Input.py")
 

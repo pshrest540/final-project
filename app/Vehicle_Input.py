@@ -12,42 +12,64 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-API_BASE = os.environ.get("API_BASE", "http://localhost:8000")
+API_BASE = os.environ.get("API_BASE", "http://localhost:8000").rstrip("/")
+API_TIMEOUT = int(os.environ.get("API_TIMEOUT", "120"))
 
 if "token" not in st.session_state:
     st.switch_page("pages/Login.py")
 
-st.markdown("""
+_user   = st.session_state.get("user", {})
+_is_biz = isinstance(_user, dict) and _user.get("account_type") == "business"
+
+# ── Theme tokens ──────────────────────────────────────────────────────────────
+_bg      = "#f0f4f8"  if _is_biz else "#0a0e1a"
+_accent  = "#0066b3"  if _is_biz else "#00d4ff"
+_fg      = "#1a2a3a"  if _is_biz else "#c8d8e8"
+_fg2     = "#4a6a8a"  if _is_biz else "#5a7a9a"
+_border  = "#d0dce8"  if _is_biz else "#1e3a5f"
+_inp_bg  = "#f8fafc"  if _is_biz else "#0d1526"
+_card_g  = "#ffffff"  if _is_biz else "linear-gradient(135deg,#0f1628 0%,#111827 100%)"
+_btn_g   = "linear-gradient(135deg,#0066b3 0%,#004d8c 100%)" if _is_biz else "linear-gradient(135deg,#00d4ff 0%,#0099cc 100%)"
+_btn_c   = "#ffffff"  if _is_biz else "#0a0e1a"
+_shadow  = "rgba(0,102,179,0.3)"  if _is_biz else "rgba(0,212,255,0.3)"
+_shadow_h= "rgba(0,102,179,0.55)" if _is_biz else "rgba(0,212,255,0.6)"
+_top     = f"linear-gradient(90deg,transparent,{_accent},transparent)"
+_hero_glow   = "rgba(0,102,179,0.35)" if _is_biz else "rgba(0,212,255,0.4)"
+_status_dot  = "#0066b3" if _is_biz else "#00ff88"
+_status_c    = "#2a4a6a" if _is_biz else "#3a6a4a"
+
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
-html, body, [class*="css"] { font-family: 'Rajdhani', sans-serif; background-color: #0a0e1a; color: #c8d8e8; }
-.stApp { background: #0a0e1a; }
-#MainMenu, footer, header { visibility: hidden; }
-.block-container { padding-top: 2rem; padding-bottom: 2rem; }
-.hero { text-align: center; padding: 3rem 0 2rem 0; }
-.hero-title { font-family: 'Share Tech Mono', monospace; font-size: 3.2rem; color: #00d4ff; letter-spacing: 0.08em; text-shadow: 0 0 30px rgba(0,212,255,0.4); margin-bottom: 0.3rem; }
-.hero-sub { font-size: 1.1rem; color: #5a7a9a; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; }
-.hero-line { width: 120px; height: 2px; background: linear-gradient(90deg, transparent, #00d4ff, transparent); margin: 1.2rem auto; }
-.section-label { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: #00d4ff; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.8rem; padding-left: 2px; }
-.input-card { background: linear-gradient(135deg, #0f1628 0%, #111827 100%); border: 1px solid #1e3a5f; border-radius: 12px; padding: 1.8rem; margin-bottom: 1.2rem; position: relative; overflow: hidden; }
-.input-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #00d4ff, transparent); }
-.stSelectbox > div > div { background: #0d1526 !important; border: 1px solid #1e3a5f !important; border-radius: 8px !important; color: #c8d8e8 !important; }
-.stNumberInput > div > div > input { background: #0d1526 !important; border: 1px solid #1e3a5f !important; border-radius: 8px !important; color: #c8d8e8 !important; }
-.stSlider > div > div > div > div { background: #00d4ff !important; }
-[data-testid="stForm"] { border: none !important; padding: 0 !important; }
-[data-testid="stFormSubmitButton"] > button { width: 100%; background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%) !important; color: #0a0e1a !important; font-family: 'Share Tech Mono', monospace !important; font-size: 1rem !important; font-weight: 700 !important; letter-spacing: 0.15em !important; border: none !important; border-radius: 8px !important; padding: 0.8rem 2rem !important; text-transform: uppercase !important; box-shadow: 0 0 20px rgba(0,212,255,0.3) !important; }
-[data-testid="stFormSubmitButton"] > button:hover { box-shadow: 0 0 35px rgba(0,212,255,0.6) !important; }
-.scale-row { display: flex; justify-content: space-between; font-size: 0.7rem; color: #3a5a7a; margin-top: -0.6rem; margin-bottom: 0.4rem; padding: 0 2px; }
-.status-bar { display: flex; align-items: center; gap: 0.5rem; font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: #3a6a4a; margin-bottom: 1rem; }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #00ff88; box-shadow: 0 0 6px #00ff88; animation: pulse 2s infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-color: {_bg}; color: {_fg}; }}
+.stApp {{ background: {_bg}; }}
+#MainMenu, footer, header {{ visibility: hidden; }}
+.block-container {{ padding-top: 2rem; padding-bottom: 2rem; }}
+.hero {{ text-align: center; padding: 3rem 0 2rem 0; }}
+.hero-title {{ font-family: 'Share Tech Mono', monospace; font-size: 3.2rem; color: {_accent}; letter-spacing: 0.08em; text-shadow: 0 0 30px {_hero_glow}; margin-bottom: 0.3rem; }}
+.hero-sub {{ font-size: 1.1rem; color: {_fg2}; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; }}
+.hero-line {{ width: 120px; height: 2px; background: {_top}; margin: 1.2rem auto; }}
+.section-label {{ font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: {_accent}; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.8rem; padding-left: 2px; }}
+.input-card {{ background: {_card_g}; border: 1px solid {_border}; border-radius: 12px; padding: 1.8rem; margin-bottom: 1.2rem; position: relative; overflow: hidden; }}
+.input-card::before {{ content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: {_top}; }}
+.stSelectbox > div > div {{ background: {_inp_bg} !important; border: 1px solid {_border} !important; border-radius: 8px !important; color: {_fg} !important; }}
+.stNumberInput > div > div > input {{ background: {_inp_bg} !important; border: 1px solid {_border} !important; border-radius: 8px !important; color: {_fg} !important; }}
+.stSlider > div > div > div > div {{ background: {_accent} !important; }}
+[data-testid="stForm"] {{ border: none !important; padding: 0 !important; }}
+[data-testid="stFormSubmitButton"] > button {{ width: 100%; background: {_btn_g} !important; color: {_btn_c} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 1rem !important; font-weight: 700 !important; letter-spacing: 0.15em !important; border: none !important; border-radius: 8px !important; padding: 0.8rem 2rem !important; text-transform: uppercase !important; box-shadow: 0 0 20px {_shadow} !important; }}
+[data-testid="stFormSubmitButton"] > button:hover {{ box-shadow: 0 0 35px {_shadow_h} !important; }}
+.stButton > button {{ background: {_btn_g} !important; color: {_btn_c} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.8rem !important; font-weight: 700 !important; letter-spacing: 0.1em !important; border: none !important; border-radius: 8px !important; padding: 0.5rem 1rem !important; text-transform: uppercase !important; box-shadow: 0 0 12px {_shadow} !important; }}
+.scale-row {{ display: flex; justify-content: space-between; font-size: 0.7rem; color: {_fg2}; margin-top: -0.6rem; margin-bottom: 0.4rem; padding: 0 2px; }}
+.status-bar {{ display: flex; align-items: center; gap: 0.5rem; font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: {_status_c}; margin-bottom: 1rem; }}
+.status-dot {{ width: 6px; height: 6px; border-radius: 50%; background: {_status_dot}; box-shadow: 0 0 6px {_status_dot}; animation: pulse 2s infinite; }}
+@keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.4; }} }}
 </style>
 """, unsafe_allow_html=True)
 
 @st.cache_data(ttl=300,show_spinner=False)
 def fetch_brands():
     try:
-        r = requests.get(f"{API_BASE}/brands", timeout=5)
+        r = requests.get(f"{API_BASE}/brands", timeout=API_TIMEOUT)
         r.raise_for_status()
         return r.json()["brands"]
     except Exception:
@@ -55,11 +77,10 @@ def fetch_brands():
 
 _, _hdr_r = st.columns([3, 3])
 with _hdr_r:
-    _user = st.session_state.get("user", {})
     _email = _user.get("email", "") if isinstance(_user, dict) else ""
     st.markdown(
         f'<p style="text-align:right;font-family:\'Share Tech Mono\',monospace;'
-        f'font-size:0.7rem;color:#5a7a9a;margin:0">{_email}</p>',
+        f'font-size:0.7rem;color:{_fg2};margin:0">{_email}</p>',
         unsafe_allow_html=True,
     )
     _btn_h, _btn_lo = st.columns(2)
@@ -81,7 +102,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 try:
-    health = requests.get(f"{API_BASE}/health", timeout=3)
+    health = requests.get(f"{API_BASE}/health", timeout=API_TIMEOUT)
     api_ok = health.status_code == 200
 except Exception:
     api_ok = False
@@ -89,7 +110,7 @@ except Exception:
 if api_ok:
     st.markdown('<div class="status-bar"><div class="status-dot"></div>SYSTEM ONLINE — API CONNECTED</div>', unsafe_allow_html=True)
 else:
-    st.error("⚠️ Cannot reach API at localhost:8000 — make sure uvicorn is running.")
+    st.error(f"Cannot reach API at {API_BASE}. The Render API may still be waking up; try again in about a minute.")
     st.stop()
 
 brands_data = fetch_brands()
@@ -116,13 +137,11 @@ with left:
     st.markdown('<div class="input-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-label">// Vehicle Identity</div>', unsafe_allow_html=True)
 
-    # Brand ONLY outside form — triggers rerun to update model list
     brand      = st.selectbox("Brand", brand_list, key="brand")
     model_list = sorted(brand_map[brand].keys())
     _sv_model  = sv.get("model") if sv else None
     _model_idx = model_list.index(_sv_model) if _sv_model and _sv_model in model_list else 0
 
-    # Everything else inside form — no dimming on change
     with st.form("vehicle_form"):
         model   = st.selectbox("Model", model_list, index=_model_idx)
         col_y, col_m = st.columns(2)
@@ -131,10 +150,8 @@ with left:
         with col_m:
             mileage = st.number_input("Mileage", min_value=0, max_value=400000, value=sv_mileage, step=1000)
 
-        st.markdown('</div>', unsafe_allow_html=True)  # close input-card visually
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── RIGHT col content — sliders inside same form ───────────────────────
-        # We render the right column's content here since both cols share one form
         st.markdown('<br>', unsafe_allow_html=True)
         st.markdown('<div class="section-label">// Driving Conditions</div>', unsafe_allow_html=True)
 
@@ -156,7 +173,7 @@ with left:
         with btn_col:
             submitted = st.form_submit_button("⚡  ANALYZE VEHICLE HEALTH")
 
-# ── Handle submission ──────────────────────────────────────────────────────────
+# ── Handle submission ─────────────────────────────────────────────────────────
 if submitted:
     payload = {
         "brand": brand, "model": model,
@@ -169,7 +186,7 @@ if submitted:
         payload["vehicle_id"] = sv["vehicle_id"]
     with st.spinner("Running diagnostics..."):
         try:
-            r = requests.post(f"{API_BASE}/predict", json=payload, timeout=10)
+            r = requests.post(f"{API_BASE}/predict", json=payload, timeout=API_TIMEOUT)
             r.raise_for_status()
             st.session_state["results"]       = r.json()
             st.session_state["vehicle_label"] = f"{year} {brand} {model}"

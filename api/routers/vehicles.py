@@ -33,6 +33,7 @@ def create_vehicle(
         year=body.year,
         current_mileage=body.current_mileage,
         vin=body.vin,
+        customer_name=body.customer_name,
     )
     db.add(vehicle)
     db.commit()

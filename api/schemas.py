@@ -129,7 +129,8 @@ class VehicleCreate(BaseModel):
     model: str
     year: int             = Field(..., ge=1990, le=2025)
     current_mileage: int  = Field(..., ge=0)
-    vin: Optional[str]    = None
+    vin: Optional[str]           = None
+    customer_name: Optional[str] = None
 
 
 class VehicleOut(BaseModel):
@@ -141,6 +142,7 @@ class VehicleOut(BaseModel):
     year:             int
     current_mileage:  int
     vin:              Optional[str]      = None
+    customer_name:    Optional[str]      = None
     added_on:         Optional[datetime] = None
 
 

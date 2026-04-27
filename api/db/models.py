@@ -36,6 +36,7 @@ class Vehicle(Base):
     model = Column(String(50), nullable=False)
     year = Column(Integer, nullable=False)
     current_mileage = Column(Integer, nullable=False)
+    customer_name = Column(String(100), nullable=True)
     added_on = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
     owner = relationship("User", back_populates="vehicles")
