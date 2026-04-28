@@ -71,6 +71,12 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 .pred-sys span {{ font-family: 'Share Tech Mono', monospace; }}
 .empty-state {{ background: {_empty_bg}; border: {_empty_border}; border-radius: 10px; padding: 2rem; text-align: center; color: {_fg2}; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; }}
 
+/* recommendation cards */
+.rec-card {{ background: {_empty_bg}; border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 0.6rem; border-left: 3px solid; display: flex; align-items: flex-start; gap: 0.7rem; }}
+.rec-icon {{ font-size: 1rem; margin-top: 0.1rem; flex-shrink: 0; }}
+.rec-system {{ font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.15rem; }}
+.rec-text {{ font-size: 0.88rem; color: {_fg}; line-height: 1.4; }}
+
 /* buttons */
 .stButton > button {{ background: {_btn_g} !important; color: {_btn_c} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.78rem !important; font-weight: 700 !important; letter-spacing: 0.12em !important; border: none !important; border-radius: 8px !important; padding: 0.45rem 0.8rem !important; text-transform: uppercase !important; box-shadow: 0 0 12px {_shadow} !important; }}
 .stButton > button:hover {{ box-shadow: 0 0 22px {_shadow_h} !important; }}
@@ -83,6 +89,29 @@ def score_color(s):
     if s >= 65:   return "#00c864"
     elif s >= 40: return "#f59e0b"
     return "#ef4444"
+
+
+def _get_recommendations(dt, el, en):
+    recs = []
+    checks = [
+        (dt["cv_wellness"],       "DRIVETRAIN", "CV Joints",      "CV joints are worn. Inspect for clicking sounds during turns.",      "#00d4ff"),
+        (dt["wb_wellness"],       "DRIVETRAIN", "Wheel Bearings", "Wheel bearings degraded. Listen for humming at highway speed.",      "#00d4ff"),
+        (dt["brk_wellness"],      "DRIVETRAIN", "Brakes",         "Brake system needs attention. Schedule inspection immediately.",     "#00d4ff"),
+        (el["bat_wellness"],      "ELECTRICAL", "Battery",        "Battery health low. Consider replacement before cold season.",       "#a78bfa"),
+        (el["alt_wellness"],      "ELECTRICAL", "Alternator",     "Alternator output low. Monitor charging voltage.",                   "#a78bfa"),
+        (el["sta_wellness"],      "ELECTRICAL", "Starter",        "Starter motor worn. Watch for slow cranking on startup.",            "#a78bfa"),
+        (en["coolant_wellness"],  "ENGINE",     "Coolant System", "Coolant system degraded. Schedule a flush and inspection.",          "#f59e0b"),
+        (en["ignition_wellness"], "ENGINE",     "Ignition",       "Ignition system worn. Replace spark plugs and check coils.",         "#f59e0b"),
+        (en["fuel_wellness"],     "ENGINE",     "Fuel System",    "Fuel system needs attention. Inspect injectors and fuel pump.",      "#f59e0b"),
+    ]
+    for score, system, component, msg, color in checks:
+        if score < 40:
+            recs.append(("🔴", system, component, msg, "#ef4444", color))
+        elif score < 65:
+            recs.append(("🟡", system, component, f"{component} showing wear. {msg}", "#f59e0b", color))
+    if not recs:
+        recs.append(("🟢", "ALL SYSTEMS", "Overall", "Vehicle health looks great. Keep up with regular maintenance intervals.", "#00c864", "#00c864"))
+    return recs
 
 
 _STATUS_COLOR = {
@@ -121,6 +150,38 @@ st.markdown(
 )
 
 # ── Mileage update ────────────────────────────────────────────────────────────
+with st.expander("DELETE VEHICLE", expanded=False):
+    st.warning("This permanently deletes this vehicle and all saved analyses, maintenance records, and replacement records.")
+    confirm_key = f"confirm_delete_vehicle_{sv['vehicle_id']}"
+    if not st.session_state.get(confirm_key):
+        if st.button("DELETE VEHICLE", key="delete_vehicle_start"):
+            st.session_state[confirm_key] = True
+            st.rerun()
+    else:
+        st.error("Click confirm to permanently delete this vehicle and all related information.")
+        c_confirm, c_cancel = st.columns(2)
+        with c_confirm:
+            if st.button("CONFIRM DELETE", key="delete_vehicle_confirm"):
+                try:
+                    r = session.delete(f"/vehicles/{sv['vehicle_id']}", token=_token)
+                    r.raise_for_status()
+                    st.session_state.pop(confirm_key, None)
+                    st.session_state.pop("selected_vehicle", None)
+                    st.session_state.pop("results", None)
+                    st.session_state.pop("results_return_page", None)
+                    session.fetch_vehicles.clear()
+                    session.fetch_predictions.clear()
+                    session.fetch_maintenance.clear()
+                    session.fetch_replacements.clear()
+                    st.success("Vehicle deleted.")
+                    st.switch_page("pages/Home.py")
+                except Exception as e:
+                    st.error(f"Could not delete vehicle: {e}")
+        with c_cancel:
+            if st.button("CANCEL", key="delete_vehicle_cancel"):
+                st.session_state.pop(confirm_key, None)
+                st.rerun()
+
 with st.expander("UPDATE CURRENT MILEAGE", expanded=False):
     mi_col, btn_col = st.columns([3, 1])
     with mi_col:
@@ -345,9 +406,31 @@ for col_idx, (sys_name, components) in enumerate(_SYSTEMS):
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ── Prediction history ────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">// Prediction History</div>', unsafe_allow_html=True)
-
 predictions = session.fetch_predictions(sv["vehicle_id"], _token)
+
+# ── Latest analysis recommendations ──────────────────────────────────────────
+if predictions and len(predictions) > 0:
+    latest = predictions[0]
+    if latest.get("cv_wellness") is not None:
+        st.markdown('<div class="section-label">// Latest Analysis Recommendations</div>', unsafe_allow_html=True)
+        _dt = {"cv_wellness": latest["cv_wellness"], "wb_wellness": latest["wb_wellness"], "brk_wellness": latest["brk_wellness"]}
+        _el = {"bat_wellness": latest["bat_wellness"], "alt_wellness": latest["alt_wellness"], "sta_wellness": latest["sta_wellness"]}
+        _en = {"coolant_wellness": latest["coolant_wellness"], "ignition_wellness": latest["ignition_wellness"], "fuel_wellness": latest["fuel_wellness"]}
+        recs = _get_recommendations(_dt, _el, _en)
+        rec_cols = st.columns(2, gap="medium")
+        for _ri, (_icon, _sys, _comp, _msg, _ac, _sc) in enumerate(recs):
+            with rec_cols[_ri % 2]:
+                st.markdown(
+                    f'<div class="rec-card" style="border-color:{_ac}">'
+                    f'<div class="rec-icon">{_icon}</div>'
+                    f'<div><div class="rec-system" style="color:{_sc}">{_sys} — {_comp}</div>'
+                    f'<div class="rec-text">{_msg}</div></div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
+        st.markdown("<br>", unsafe_allow_html=True)
+
+st.markdown('<div class="section-label">// Prediction History</div>', unsafe_allow_html=True)
 
 if predictions is None:
     st.error("Could not load predictions — check API connection.")
@@ -358,18 +441,81 @@ elif len(predictions) == 0:
         unsafe_allow_html=True,
     )
 else:
-    for p in predictions:
+    for i, p in enumerate(predictions):
         date_str = p["calculated_at"][:10] if p.get("calculated_at") else "—"
         ov_color = score_color(p["overall_score"])
         en_color = score_color(p["engine_score"])
         dt_color = score_color(p["drivetrain_score"])
         el_color = score_color(p["electrical_score"])
-        st.markdown(f"""
-        <div class="pred-row">
-            <span class="pred-date">{date_str}</span>
-            <span class="pred-overall" style="color:{ov_color}">{p['overall_score']:.0f}<span style="font-size:0.65rem;color:{_fg2}">/100</span></span>
-            <span class="pred-sys">Engine <span style="color:{en_color}">{p['engine_score']:.0f}</span></span>
-            <span class="pred-sys">Drivetrain <span style="color:{dt_color}">{p['drivetrain_score']:.0f}</span></span>
-            <span class="pred-sys">Electrical <span style="color:{el_color}">{p['electrical_score']:.0f}</span></span>
-        </div>
-        """, unsafe_allow_html=True)
+        has_details = p.get("cv_wellness") is not None
+
+        row_c, btn_c, del_c = st.columns([6, 1, 1])
+        with row_c:
+            st.markdown(
+                f'<div class="pred-row">'
+                f'<span class="pred-date">{date_str}</span>'
+                f'<span class="pred-overall" style="color:{ov_color}">{p["overall_score"]:.0f}'
+                f'<span style="font-size:0.65rem;color:{_fg2}">/100</span></span>'
+                f'<span class="pred-sys">Engine <span style="color:{en_color}">{p["engine_score"]:.0f}</span></span>'
+                f'<span class="pred-sys">Drivetrain <span style="color:{dt_color}">{p["drivetrain_score"]:.0f}</span></span>'
+                f'<span class="pred-sys">Electrical <span style="color:{el_color}">{p["electrical_score"]:.0f}</span></span>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+        with btn_c:
+            if has_details:
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("DETAILS", key=f"view_pred_{i}"):
+                    st.session_state["results"] = {
+                        "drivetrain": {
+                            "cv_wellness":  p["cv_wellness"],
+                            "wb_wellness":  p["wb_wellness"],
+                            "brk_wellness": p["brk_wellness"],
+                            "system_avg":   p["drivetrain_score"],
+                        },
+                        "electrical": {
+                            "bat_wellness": p["bat_wellness"],
+                            "alt_wellness": p["alt_wellness"],
+                            "sta_wellness": p["sta_wellness"],
+                            "system_avg":   p["electrical_score"],
+                        },
+                        "engine": {
+                            "coolant_wellness":  p["coolant_wellness"],
+                            "ignition_wellness": p["ignition_wellness"],
+                            "fuel_wellness":     p["fuel_wellness"],
+                            "system_avg":        p["engine_score"],
+                        },
+                        "overall_avg": p["overall_score"],
+                        "replacements_applied": [],
+                    }
+                    st.session_state["vehicle_label"] = f'{sv["year"]} {sv["brand"]} {sv["model"]} — {date_str}'
+                    st.session_state["results_return_page"] = "pages/VehicleDetail.py"
+                    st.session_state["results_source"] = "history"
+                    st.switch_page("pages/Results.py")
+            else:
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.button("DETAILS", key=f"view_pred_disabled_{i}", disabled=True)
+        with del_c:
+            st.markdown("<br>", unsafe_allow_html=True)
+            prediction_id = p["prediction_id"]
+            delete_key = f"confirm_delete_prediction_{prediction_id}"
+            if not st.session_state.get(delete_key):
+                if st.button("DELETE", key=f"delete_pred_{prediction_id}"):
+                    st.session_state[delete_key] = True
+                    st.rerun()
+            else:
+                if st.button("CONFIRM", key=f"confirm_pred_{prediction_id}"):
+                    try:
+                        r = session.delete(
+                            f"/vehicles/{sv['vehicle_id']}/predictions/{prediction_id}",
+                            token=_token,
+                        )
+                        r.raise_for_status()
+                        st.session_state.pop(delete_key, None)
+                        session.fetch_predictions.clear()
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Could not delete analysis: {e}")
+                if st.button("CANCEL", key=f"cancel_pred_{prediction_id}"):
+                    st.session_state.pop(delete_key, None)
+                    st.rerun()

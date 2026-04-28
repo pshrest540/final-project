@@ -138,6 +138,7 @@ with col_users:
             is_self    = uid == _user.get("user_id")
             badge_cls  = f"badge-{u['account_type']}"  # Enum-constrained, safe
             display    = html.escape(u.get("business_name") or u.get("full_name") or "")
+            display_html = f'<div class="user-name">{display}</div>' if display else ""
             joined     = (u.get("created_at") or "")[:10]
             confirm_key = f"confirm_del_{uid}"
             type_key    = f"type_sel_{uid}"
@@ -153,7 +154,7 @@ with col_users:
             with row_info:
                 st.markdown(
                     f'<div class="user-email">{html.escape(u["email"])}</div>'
-                    f'{"<div class=\'user-name\'>" + display + "</div>" if display else ""}'
+                    f'{display_html}'
                     f'<div style="margin-top:0.35rem;display:flex;align-items:center;gap:0.5rem">'
                     f'<span class="badge {badge_cls}">{u["account_type"]}</span>'
                     f'<span class="user-meta">· {u["vehicle_count"]} vehicles · {u["prediction_count"]} analyses · joined {joined}</span>'

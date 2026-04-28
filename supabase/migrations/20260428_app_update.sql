@@ -1,5 +1,6 @@
--- Supabase/PostgreSQL schema for the MIA vehicle maintenance app.
--- This matches supabase/schema.sql.
+-- Run this once against an existing Supabase/PostgreSQL database after the
+-- maintenance, admin, customer, and full prediction-history app update.
+-- It is safe to run more than once.
 
 do $$
 begin
@@ -24,73 +25,11 @@ alter type service_category_enum add value if not exists 'drivetrain';
 alter type service_category_enum add value if not exists 'electrical';
 alter type service_category_enum add value if not exists 'routine';
 
-create table if not exists users (
-    user_id varchar(36) primary key,
-    email varchar(255) unique not null,
-    password_hash varchar(255) not null,
-    account_type account_type_enum not null default 'personal',
-    business_name varchar(255),
-    full_name varchar(255),
-    created_at timestamp with time zone default now()
-);
-
-create table if not exists vehicles (
-    vehicle_id varchar(36) primary key,
-    owner_id varchar(36) not null references users(user_id) on delete cascade,
-    vin varchar(17),
-    brand varchar(50) not null,
-    model varchar(50) not null,
-    year integer not null,
-    current_mileage integer not null,
-    customer_name varchar(100),
-    added_on timestamp with time zone default now()
-);
-
-create table if not exists vehicle_habits (
-    habit_id varchar(36) primary key,
-    vehicle_id varchar(36) not null references vehicles(vehicle_id) on delete cascade,
-    rough_scale double precision default 0.0,
-    torque_scale double precision default 0.0,
-    stop_scale double precision default 0.0,
-    temp_scale double precision default 0.0,
-    habit_scale double precision default 0.0,
-    idle_scale double precision default 0.0,
-    last_updated timestamp with time zone default now()
-);
-
-create table if not exists maintenance_logs (
-    log_id varchar(36) primary key,
-    vehicle_id varchar(36) not null references vehicles(vehicle_id) on delete cascade,
-    service_category service_category_enum not null,
-    component_replaced varchar(100) not null,
-    mileage_at_service integer not null,
-    service_date date not null,
-    performed_by varchar(100),
-    service_notes text
-);
-
-create table if not exists wellness_predictions (
-    prediction_id varchar(36) primary key,
-    vehicle_id varchar(36) not null references vehicles(vehicle_id) on delete cascade,
-    overall_score double precision not null,
-    engine_score double precision not null,
-    drivetrain_score double precision not null,
-    electrical_score double precision not null,
-    cv_wellness double precision,
-    wb_wellness double precision,
-    brk_wellness double precision,
-    bat_wellness double precision,
-    alt_wellness double precision,
-    sta_wellness double precision,
-    coolant_wellness double precision,
-    ignition_wellness double precision,
-    fuel_wellness double precision,
-    calculated_at timestamp with time zone default now()
-);
-
 alter table users add column if not exists business_name varchar(255);
 alter table users add column if not exists full_name varchar(255);
+
 alter table vehicles add column if not exists customer_name varchar(100);
+
 alter table wellness_predictions add column if not exists cv_wellness double precision;
 alter table wellness_predictions add column if not exists wb_wellness double precision;
 alter table wellness_predictions add column if not exists brk_wellness double precision;

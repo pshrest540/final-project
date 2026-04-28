@@ -174,6 +174,8 @@ if submitted:
             r.raise_for_status()
             st.session_state["results"]       = r.json()
             st.session_state["vehicle_label"] = f"{year} {brand} {model}"
+            st.session_state.pop("results_return_page", None)
+            st.session_state["results_source"] = "live"
             if sv and "vehicle_id" in sv:
                 session.fetch_predictions.clear()
             st.switch_page("pages/Results.py")

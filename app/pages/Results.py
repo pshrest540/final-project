@@ -183,8 +183,13 @@ def get_recommendations(dt, el, en):
 
 
 # ── UI ────────────────────────────────────────────────────────────────────────
-if st.button("← NEW ANALYSIS"):
-    st.switch_page("Vehicle_Input.py")
+_return_page = st.session_state.get("results_return_page")
+_back_label = "← VEHICLE DETAIL" if _return_page == "pages/VehicleDetail.py" else "← NEW ANALYSIS"
+if st.button(_back_label):
+    if _return_page == "pages/VehicleDetail.py":
+        st.switch_page("pages/VehicleDetail.py")
+    else:
+        st.switch_page("Vehicle_Input.py")
 
 ov_color  = score_color(overall)
 ov_status = status_text(overall)

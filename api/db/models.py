@@ -95,6 +95,16 @@ class WellnessPrediction(Base):
     engine_score = Column(Float, nullable=False)
     drivetrain_score = Column(Float, nullable=False)
     electrical_score = Column(Float, nullable=False)
+    # Per-component scores — nullable so old rows without them still load
+    cv_wellness       = Column(Float, nullable=True)
+    wb_wellness       = Column(Float, nullable=True)
+    brk_wellness      = Column(Float, nullable=True)
+    bat_wellness      = Column(Float, nullable=True)
+    alt_wellness      = Column(Float, nullable=True)
+    sta_wellness      = Column(Float, nullable=True)
+    coolant_wellness  = Column(Float, nullable=True)
+    ignition_wellness = Column(Float, nullable=True)
+    fuel_wellness     = Column(Float, nullable=True)
     calculated_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
     vehicle = relationship("Vehicle", back_populates="predictions")

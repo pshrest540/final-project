@@ -61,6 +61,15 @@ def predict(
                 engine_score=result["engine"]["system_avg"],
                 drivetrain_score=result["drivetrain"]["system_avg"],
                 electrical_score=result["electrical"]["system_avg"],
+                cv_wellness=result["drivetrain"]["cv_wellness"],
+                wb_wellness=result["drivetrain"]["wb_wellness"],
+                brk_wellness=result["drivetrain"]["brk_wellness"],
+                bat_wellness=result["electrical"]["bat_wellness"],
+                alt_wellness=result["electrical"]["alt_wellness"],
+                sta_wellness=result["electrical"]["sta_wellness"],
+                coolant_wellness=result["engine"]["coolant_wellness"],
+                ignition_wellness=result["engine"]["ignition_wellness"],
+                fuel_wellness=result["engine"]["fuel_wellness"],
             ))
             db.commit()
         except Exception as e:

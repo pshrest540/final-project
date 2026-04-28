@@ -187,6 +187,15 @@ class PredictionOut(BaseModel):
     engine_score:       float
     drivetrain_score:   float
     electrical_score:   float
+    cv_wellness:        Optional[float] = None
+    wb_wellness:        Optional[float] = None
+    brk_wellness:       Optional[float] = None
+    bat_wellness:       Optional[float] = None
+    alt_wellness:       Optional[float] = None
+    sta_wellness:       Optional[float] = None
+    coolant_wellness:   Optional[float] = None
+    ignition_wellness:  Optional[float] = None
+    fuel_wellness:      Optional[float] = None
     calculated_at:      Optional[datetime] = None
 
 
