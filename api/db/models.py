@@ -1,6 +1,6 @@
 from sqlalchemy import (
     Column, String, Integer, Float, Text, Date, TIMESTAMP,
-    ForeignKey, Enum
+    ForeignKey, Enum, UniqueConstraint
 )
 from sqlalchemy import text
 from sqlalchemy.orm import relationship
@@ -26,6 +26,7 @@ class User(Base):
     vehicles = relationship("Vehicle", back_populates="owner", cascade="all, delete")
 
 
+
 class Vehicle(Base):
     __tablename__ = "vehicles"
 
@@ -43,6 +44,8 @@ class Vehicle(Base):
     habits = relationship("VehicleHabit", back_populates="vehicle", cascade="all, delete")
     maintenance_logs = relationship("MaintenanceLog", back_populates="vehicle", cascade="all, delete")
     predictions = relationship("WellnessPrediction", back_populates="vehicle", cascade="all, delete")
+    scheduled_maintenance = relationship("ScheduledMaintenance", back_populates="vehicle", cascade="all, delete")
+    component_replacements = relationship("ComponentReplacement", back_populates="vehicle", cascade="all, delete")
 
 
 class VehicleHabit(Base):
@@ -95,3 +98,33 @@ class WellnessPrediction(Base):
     calculated_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
     vehicle = relationship("Vehicle", back_populates="predictions")
+
+
+class ScheduledMaintenance(Base):
+    __tablename__ = "scheduled_maintenance"
+
+    id = Column(String(36), primary_key=True)
+    vehicle_id = Column(String(36), ForeignKey("vehicles.vehicle_id", ondelete="CASCADE"), nullable=False)
+    task_key = Column(String(50), nullable=False)
+    last_service_mileage = Column(Integer, nullable=True)
+    interval_miles = Column(Integer, nullable=False)
+    updated_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+
+    vehicle = relationship("Vehicle", back_populates="scheduled_maintenance")
+
+    __table_args__ = (UniqueConstraint("vehicle_id", "task_key", name="uq_vehicle_task"),)
+
+
+class ComponentReplacement(Base):
+    __tablename__ = "component_replacements"
+
+    id = Column(String(36), primary_key=True)
+    vehicle_id = Column(String(36), ForeignKey("vehicles.vehicle_id", ondelete="CASCADE"), nullable=False)
+    component_key = Column(String(50), nullable=False)
+    replaced_at_mileage = Column(Integer, nullable=False)
+    notes = Column(String(255), nullable=True)
+    replaced_on = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+
+    vehicle = relationship("Vehicle", back_populates="component_replacements")
+
+    __table_args__ = (UniqueConstraint("vehicle_id", "component_key", name="uq_vehicle_component"),)

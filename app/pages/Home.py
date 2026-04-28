@@ -1,7 +1,6 @@
-import os
-
-import requests
+import html
 import streamlit as st
+import session
 
 st.set_page_config(
     page_title="Dashboard — MIA",
@@ -10,9 +9,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-API_BASE = os.environ.get("API_BASE", "http://localhost:8000").rstrip("/")
-API_TIMEOUT = int(os.environ.get("API_TIMEOUT", "120"))
-
 if "token" not in st.session_state:
     st.switch_page("pages/Login.py")
 
@@ -20,26 +16,26 @@ _user   = st.session_state.get("user", {})
 _is_biz = isinstance(_user, dict) and _user.get("account_type") == "business"
 
 # ── Theme tokens ──────────────────────────────────────────────────────────────
-_bg      = "#f0f4f8"  if _is_biz else "#0a0e1a"
-_accent  = "#0066b3"  if _is_biz else "#00d4ff"
-_fg      = "#1a2a3a"  if _is_biz else "#c8d8e8"
-_fg2     = "#4a6a8a"  if _is_biz else "#5a7a9a"
-_border  = "#d0dce8"  if _is_biz else "#1e3a5f"
-_card_g  = "#ffffff"  if _is_biz else "linear-gradient(135deg,#0f1628 0%,#111827 100%)"
-_btn_g   = "linear-gradient(135deg,#0066b3 0%,#004d8c 100%)" if _is_biz else "linear-gradient(135deg,#00d4ff 0%,#0099cc 100%)"
-_btn_c   = "#ffffff"  if _is_biz else "#0a0e1a"
-_shadow  = "rgba(0,102,179,0.25)" if _is_biz else "rgba(0,212,255,0.25)"
-_shadow_h= "rgba(0,102,179,0.5)"  if _is_biz else "rgba(0,212,255,0.55)"
+_bg      = "#f0f4f8"  if _is_biz else "#070707"
+_accent  = "#0066b3"  if _is_biz else "#ffffff"
+_fg      = "#1a2a3a"  if _is_biz else "#f0f0f0"
+_fg2     = "#4a6a8a"  if _is_biz else "#555555"
+_border  = "#d0dce8"  if _is_biz else "#1e1e1e"
+_card_g  = "#ffffff"  if _is_biz else "#0c0c0c"
+_btn_g   = "linear-gradient(135deg,#0066b3 0%,#004d8c 100%)" if _is_biz else "#f5f5f5"
+_btn_c   = "#ffffff"  if _is_biz else "#080808"
+_shadow  = "rgba(0,102,179,0.25)" if _is_biz else "rgba(255,255,255,0.07)"
+_shadow_h= "rgba(0,102,179,0.5)"  if _is_biz else "rgba(255,255,255,0.14)"
 _top     = f"linear-gradient(90deg,transparent,{_accent},transparent)"
-_empty_bg     = "#f8fafc"            if _is_biz else "#0d1526"
-_empty_border = "1px dashed #c0d0e0" if _is_biz else "1px dashed #1e3a5f"
-_vin_color    = "#7a9abc"            if _is_biz else "#3a5a7a"
+_empty_bg     = "#f8fafc"            if _is_biz else "#0e0e0e"
+_empty_border = "1px dashed #c0d0e0" if _is_biz else "1px dashed #222222"
+_vin_color    = "#7a9abc"            if _is_biz else "#3a3a3a"
 
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
 html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-color: {_bg}; color: {_fg}; }}
-.stApp {{ background: {_bg}; }}
+.stApp {{ background: {"radial-gradient(ellipse 120% 50% at 50% 0%, #131313 0%, #070707 60%)" if not _is_biz else _bg}; }}
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding-top: 2rem; padding-bottom: 2rem; }}
 .section-label {{ font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: {_accent}; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.8rem; }}
@@ -62,26 +58,13 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 """, unsafe_allow_html=True)
 
 
-def fetch_vehicles():
-    try:
-        r = requests.get(
-            f"{API_BASE}/vehicles",
-            headers={"Authorization": f"Bearer {st.session_state['token']}"},
-            timeout=API_TIMEOUT,
-        )
-        r.raise_for_status()
-        return r.json()
-    except Exception:
-        return None
-
-
 # ── Top bar ───────────────────────────────────────────────────────────────────
 _tl, _tr = st.columns([4, 2])
 with _tl:
     _title = "// FLEET DASHBOARD" if _is_biz else "// DASHBOARD"
     st.markdown(f'<div class="page-title">{_title}</div>', unsafe_allow_html=True)
 with _tr:
-    _email = _user.get("email", "") if isinstance(_user, dict) else ""
+    _email = html.escape(_user.get("email", "") if isinstance(_user, dict) else "")
     st.markdown(
         f'<p style="text-align:right;font-family:\'Share Tech Mono\',monospace;'
         f'font-size:0.7rem;color:{_fg2};margin:0;padding-top:0.35rem">{_email}</p>',
@@ -96,7 +79,7 @@ with _tr:
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
 # ── Welcome ───────────────────────────────────────────────────────────────────
-_name  = (_user.get("business_name") or _user.get("full_name") or _user.get("email", "")) if isinstance(_user, dict) else ""
+_name  = html.escape((_user.get("business_name") or _user.get("full_name") or _user.get("email", "")) if isinstance(_user, dict) else "")
 _greet = "FLEET MANAGER" if _is_biz else "WELCOME BACK"
 st.markdown(
     f'<div class="welcome-block"><div class="welcome-text">{_greet}, '
@@ -113,7 +96,7 @@ with _vadd:
     if st.button("+ ADD VEHICLE", key="add_vehicle"):
         st.switch_page("pages/AddVehicle.py")
 
-vehicles = fetch_vehicles()
+vehicles = session.fetch_vehicles(st.session_state["token"])
 
 if vehicles is None:
     st.error("Could not load vehicles — check API connection.")
@@ -127,17 +110,18 @@ else:
     cols = st.columns(3, gap="medium")
     for i, v in enumerate(vehicles):
         with cols[i % 3]:
-            vin_line      = f'<div class="v-vin">VIN: {v["vin"]}</div>' if v.get("vin") else ""
-            customer_line = f'<div class="v-customer">CUSTOMER: {v["customer_name"]}</div>' if (_is_biz and v.get("customer_name")) else ""
-            st.markdown(f"""
-            <div class="v-card">
-                <div class="v-year">// {v['year']}</div>
-                <div class="v-name">{v['brand']} {v['model']}</div>
-                {customer_line}
-                <div class="v-mileage">{v['current_mileage']:,} miles</div>
-                {vin_line}
-            </div>
-            """, unsafe_allow_html=True)
+            _vin  = f'<div class="v-vin">VIN: {html.escape(v["vin"])}</div>' if v.get("vin") else ""
+            _cust = f'<div class="v-customer">CUSTOMER: {html.escape(v["customer_name"])}</div>' if (_is_biz and v.get("customer_name")) else ""
+            st.markdown(
+                f'<div class="v-card">'
+                f'<div class="v-year">// {v["year"]}</div>'
+                f'<div class="v-name">{html.escape(v["brand"])} {html.escape(v["model"])}</div>'
+                f'{_cust}'
+                f'<div class="v-mileage">{v["current_mileage"]:,} miles</div>'
+                f'{_vin}'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
             _ba, _bd = st.columns(2)
             with _ba:
                 if st.button("⚡ ANALYZE", key=f"analyze_{v['vehicle_id']}"):

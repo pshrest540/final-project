@@ -5,12 +5,14 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import predict, brands, retrain
+from api.routers.maintenance import router as maintenance_router
 from api.models.loader import load_all_models
 from api.routers import dbtest
 import api.db.models  # noqa: F401 — registers all ORM models with Base
 from api.db.session import engine, Base
 from api.routers.auth import router as auth_router
 from api.routers.vehicles import router as vehicles_router
+from api.routers.admin import router as admin_router
 
 app = FastAPI(
     title="Vehicle Maintenance Predictor API",
@@ -18,11 +20,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
+_raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8501")
+_allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_allowed_origins,
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # Keep startup fast so Render can mark the service healthy quickly.
@@ -44,6 +49,8 @@ app.include_router(retrain.router)
 app.include_router(dbtest.router)
 app.include_router(auth_router)
 app.include_router(vehicles_router)
+app.include_router(admin_router)
+app.include_router(maintenance_router)
 
 @app.get("/", tags=["Health"])
 def root():

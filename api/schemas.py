@@ -4,7 +4,7 @@ FastAPI uses these to auto-validate inputs and generate API docs.
 """
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from typing import Optional
 
 
@@ -59,11 +59,12 @@ class EngineScores(BaseModel):
 # ── Response ───────────────────────────────────────────────────────────────────
 
 class PredictResponse(BaseModel):
-    vehicle:     str             = Field(..., example="2015 Toyota Camry — 85,000 miles")
-    drivetrain:  DrivetrainScores
-    electrical:  ElectricalScores
-    engine:      EngineScores
-    overall_avg: float           = Field(..., description="Average across all 3 systems")
+    vehicle:               str             = Field(..., example="2015 Toyota Camry — 85,000 miles")
+    drivetrain:            DrivetrainScores
+    electrical:            ElectricalScores
+    engine:                EngineScores
+    overall_avg:           float           = Field(..., description="Average across all 3 systems")
+    replacements_applied:  list[str]       = Field(default_factory=list, description="Component keys whose scores used effective mileage")
 
 
 # ── Brands response ────────────────────────────────────────────────────────────
@@ -94,16 +95,23 @@ class RetrainResponse(BaseModel):
 # ── Auth schemas ───────────────────────────────────────────────────────────────
 
 class UserCreate(BaseModel):
-    email: str
-    password: str
-    full_name: Optional[str] = None
+    email: EmailStr
+    password: str = Field(..., min_length=8, max_length=128)
+    full_name: Optional[str] = Field(None, max_length=100)
     account_type: Optional[str] = "personal"
-    business_name: Optional[str] = None
+    business_name: Optional[str] = Field(None, max_length=255)
+
+    @field_validator("account_type")
+    @classmethod
+    def restrict_account_type(cls, v: Optional[str]) -> str:
+        if v not in ("personal", "business"):
+            return "personal"
+        return v
 
 
 class UserLogin(BaseModel):
-    email: str
-    password: str
+    email: EmailStr
+    password: str = Field(..., max_length=128)
 
 
 class UserOut(BaseModel):
@@ -122,15 +130,40 @@ class Token(BaseModel):
     user: UserOut
 
 
+# ── Admin schemas ─────────────────────────────────────────────────────────────
+
+class UserAdminOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    user_id:          str
+    email:            str
+    account_type:     str
+    full_name:        Optional[str] = None
+    business_name:    Optional[str] = None
+    created_at:       Optional[datetime] = None
+    vehicle_count:    int = 0
+    prediction_count: int = 0
+
+
+class AdminStats(BaseModel):
+    total_users:       int
+    total_vehicles:    int
+    total_predictions: int
+
+
+class AccountTypeUpdate(BaseModel):
+    account_type: str
+
+
 # ── Vehicle schemas ────────────────────────────────────────────────────────────
 
 class VehicleCreate(BaseModel):
-    brand: str
-    model: str
+    brand: str            = Field(..., min_length=1, max_length=50)
+    model: str            = Field(..., min_length=1, max_length=50)
     year: int             = Field(..., ge=1990, le=2025)
-    current_mileage: int  = Field(..., ge=0)
-    vin: Optional[str]           = None
-    customer_name: Optional[str] = None
+    current_mileage: int  = Field(..., ge=0, le=2_000_000)
+    vin: Optional[str]           = Field(None, min_length=17, max_length=17, pattern=r"^[A-HJ-NPR-Z0-9]{17}$")
+    customer_name: Optional[str] = Field(None, max_length=100)
 
 
 class VehicleOut(BaseModel):
@@ -155,3 +188,38 @@ class PredictionOut(BaseModel):
     drivetrain_score:   float
     electrical_score:   float
     calculated_at:      Optional[datetime] = None
+
+
+# ── Maintenance schemas ────────────────────────────────────────────────────────
+
+class MaintenanceTaskOut(BaseModel):
+    task_key:             str
+    task_name:            str
+    interval_miles:       int
+    last_service_mileage: Optional[int]   = None
+    next_due_mileage:     Optional[int]   = None
+    miles_remaining:      Optional[int]   = None
+    status:               str             = "unknown"
+
+
+class LogServiceRequest(BaseModel):
+    service_mileage: int           = Field(..., ge=0, le=2_000_000)
+    interval_miles:  Optional[int] = Field(None, gt=0)
+
+
+class VehicleMileageUpdate(BaseModel):
+    current_mileage: int = Field(..., ge=0, le=2_000_000)
+
+
+# ── Component replacement schemas ─────────────────────────────────────────────
+
+class ComponentReplacementOut(BaseModel):
+    component_key:       str
+    component_name:      str
+    replaced_at_mileage: int
+    notes:               Optional[str] = None
+
+
+class LogReplacementRequest(BaseModel):
+    replaced_at_mileage: int           = Field(..., ge=0, le=2_000_000)
+    notes:               Optional[str] = Field(None, max_length=255)

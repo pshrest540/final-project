@@ -1,7 +1,5 @@
-import os
-
-import requests
 import streamlit as st
+import session
 
 st.set_page_config(
     page_title="Add Vehicle — MIA",
@@ -9,9 +7,6 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed",
 )
-
-API_BASE = os.environ.get("API_BASE", "http://localhost:8000").rstrip("/")
-API_TIMEOUT = int(os.environ.get("API_TIMEOUT", "120"))
 
 if "token" not in st.session_state:
     st.switch_page("pages/Login.py")
@@ -55,16 +50,6 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 """, unsafe_allow_html=True)
 
 
-@st.cache_data(ttl=300, show_spinner=False)
-def fetch_brands():
-    try:
-        r = requests.get(f"{API_BASE}/brands", timeout=API_TIMEOUT)
-        r.raise_for_status()
-        return r.json()["brands"]
-    except Exception:
-        return []
-
-
 # ── Header ────────────────────────────────────────────────────────────────────
 _hl, _hr = st.columns([3, 1])
 with _hl:
@@ -77,7 +62,7 @@ with _hr:
 st.markdown('<div class="form-card">', unsafe_allow_html=True)
 st.markdown('<div class="section-label">// Vehicle Details</div>', unsafe_allow_html=True)
 
-brands_data = fetch_brands()
+brands_data = session.fetch_brands()
 if not brands_data:
     st.error("Could not load brand data from API.")
     st.stop()
@@ -123,13 +108,9 @@ if submitted:
         payload["customer_name"] = customer_name.strip()
 
     try:
-        r = requests.post(
-            f"{API_BASE}/vehicles",
-            json=payload,
-            headers={"Authorization": f"Bearer {st.session_state['token']}"},
-            timeout=API_TIMEOUT,
-        )
+        r = session.post("/vehicles", json=payload, token=st.session_state["token"])
         if r.status_code == 201:
+            session.fetch_vehicles.clear()
             st.success("Vehicle added!")
             st.switch_page("pages/Home.py")
         else:

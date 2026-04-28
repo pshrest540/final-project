@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from api.db.session import get_db
 from api.db.models import User, Vehicle, WellnessPrediction
-from api.schemas import VehicleCreate, VehicleOut, PredictionOut
+from api.schemas import VehicleCreate, VehicleOut, PredictionOut, VehicleMileageUpdate
 from api.dependencies import get_current_user
 
 router = APIRouter(prefix="/vehicles", tags=["Vehicles"])
@@ -52,6 +52,26 @@ def get_vehicle(
         raise HTTPException(status_code=404, detail="Vehicle not found")
     if vehicle.owner_id != current_user.user_id:
         raise HTTPException(status_code=403, detail="Not your vehicle")
+    return vehicle
+
+
+@router.patch("/{vehicle_id}/mileage", response_model=VehicleOut)
+def update_mileage(
+    vehicle_id: str,
+    body: VehicleMileageUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    vehicle = db.query(Vehicle).filter(Vehicle.vehicle_id == vehicle_id).first()
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+    if vehicle.owner_id != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not your vehicle")
+    if body.current_mileage < vehicle.current_mileage:
+        raise HTTPException(status_code=400, detail="Mileage cannot be decreased")
+    vehicle.current_mileage = body.current_mileage
+    db.commit()
+    db.refresh(vehicle)
     return vehicle
 
 

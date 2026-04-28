@@ -1,9 +1,9 @@
 
 #Run with: streamlit run app/Vehicle_Input.py
 
-import os
+import html
 import streamlit as st
-import requests
+import session
 
 st.set_page_config(
     page_title="Vehicle Health Predictor",
@@ -12,9 +12,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-API_BASE = os.environ.get("API_BASE", "http://localhost:8000").rstrip("/")
-API_TIMEOUT = int(os.environ.get("API_TIMEOUT", "120"))
-
 if "token" not in st.session_state:
     st.switch_page("pages/Login.py")
 
@@ -22,27 +19,27 @@ _user   = st.session_state.get("user", {})
 _is_biz = isinstance(_user, dict) and _user.get("account_type") == "business"
 
 # ── Theme tokens ──────────────────────────────────────────────────────────────
-_bg      = "#f0f4f8"  if _is_biz else "#0a0e1a"
-_accent  = "#0066b3"  if _is_biz else "#00d4ff"
-_fg      = "#1a2a3a"  if _is_biz else "#c8d8e8"
-_fg2     = "#4a6a8a"  if _is_biz else "#5a7a9a"
-_border  = "#d0dce8"  if _is_biz else "#1e3a5f"
-_inp_bg  = "#f8fafc"  if _is_biz else "#0d1526"
-_card_g  = "#ffffff"  if _is_biz else "linear-gradient(135deg,#0f1628 0%,#111827 100%)"
-_btn_g   = "linear-gradient(135deg,#0066b3 0%,#004d8c 100%)" if _is_biz else "linear-gradient(135deg,#00d4ff 0%,#0099cc 100%)"
-_btn_c   = "#ffffff"  if _is_biz else "#0a0e1a"
-_shadow  = "rgba(0,102,179,0.3)"  if _is_biz else "rgba(0,212,255,0.3)"
-_shadow_h= "rgba(0,102,179,0.55)" if _is_biz else "rgba(0,212,255,0.6)"
+_bg      = "#f0f4f8"  if _is_biz else "#070707"
+_accent  = "#0066b3"  if _is_biz else "#ffffff"
+_fg      = "#1a2a3a"  if _is_biz else "#f0f0f0"
+_fg2     = "#4a6a8a"  if _is_biz else "#555555"
+_border  = "#d0dce8"  if _is_biz else "#1e1e1e"
+_inp_bg  = "#f8fafc"  if _is_biz else "#111111"
+_card_g  = "#ffffff"  if _is_biz else "#0c0c0c"
+_btn_g   = "linear-gradient(135deg,#0066b3 0%,#004d8c 100%)" if _is_biz else "#f5f5f5"
+_btn_c   = "#ffffff"  if _is_biz else "#080808"
+_shadow  = "rgba(0,102,179,0.3)"  if _is_biz else "rgba(255,255,255,0.07)"
+_shadow_h= "rgba(0,102,179,0.55)" if _is_biz else "rgba(255,255,255,0.14)"
 _top     = f"linear-gradient(90deg,transparent,{_accent},transparent)"
-_hero_glow   = "rgba(0,102,179,0.35)" if _is_biz else "rgba(0,212,255,0.4)"
-_status_dot  = "#0066b3" if _is_biz else "#00ff88"
-_status_c    = "#2a4a6a" if _is_biz else "#3a6a4a"
+_hero_glow   = "rgba(0,102,179,0.35)" if _is_biz else "rgba(255,255,255,0.08)"
+_status_dot  = "#0066b3" if _is_biz else "#d8d8d8"
+_status_c    = "#2a4a6a" if _is_biz else "#4a4a4a"
 
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
 html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-color: {_bg}; color: {_fg}; }}
-.stApp {{ background: {_bg}; }}
+.stApp {{ background: {"radial-gradient(ellipse 120% 50% at 50% 0%, #131313 0%, #070707 60%)" if not _is_biz else _bg}; }}
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding-top: 2rem; padding-bottom: 2rem; }}
 .hero {{ text-align: center; padding: 3rem 0 2rem 0; }}
@@ -66,18 +63,9 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 </style>
 """, unsafe_allow_html=True)
 
-@st.cache_data(ttl=300,show_spinner=False)
-def fetch_brands():
-    try:
-        r = requests.get(f"{API_BASE}/brands", timeout=API_TIMEOUT)
-        r.raise_for_status()
-        return r.json()["brands"]
-    except Exception:
-        return None
-
 _, _hdr_r = st.columns([3, 3])
 with _hdr_r:
-    _email = _user.get("email", "") if isinstance(_user, dict) else ""
+    _email = html.escape(_user.get("email", "") if isinstance(_user, dict) else "")
     st.markdown(
         f'<p style="text-align:right;font-family:\'Share Tech Mono\',monospace;'
         f'font-size:0.7rem;color:{_fg2};margin:0">{_email}</p>',
@@ -101,19 +89,15 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-try:
-    health = requests.get(f"{API_BASE}/health", timeout=API_TIMEOUT)
-    api_ok = health.status_code == 200
-except Exception:
-    api_ok = False
+api_ok = session.check_health()
 
 if api_ok:
     st.markdown('<div class="status-bar"><div class="status-dot"></div>SYSTEM ONLINE — API CONNECTED</div>', unsafe_allow_html=True)
 else:
-    st.error(f"Cannot reach API at {API_BASE}. The Render API may still be waking up; try again in about a minute.")
+    st.error(f"Cannot reach API at {session.API_BASE}. The Render API may still be waking up; try again in about a minute.")
     st.stop()
 
-brands_data = fetch_brands()
+brands_data = session.fetch_brands()
 if not brands_data:
     st.error("Failed to load brand data from API.")
     st.stop()
@@ -186,10 +170,12 @@ if submitted:
         payload["vehicle_id"] = sv["vehicle_id"]
     with st.spinner("Running diagnostics..."):
         try:
-            r = requests.post(f"{API_BASE}/predict", json=payload, timeout=API_TIMEOUT)
+            r = session.post("/predict", json=payload, token=st.session_state.get("token"))
             r.raise_for_status()
             st.session_state["results"]       = r.json()
             st.session_state["vehicle_label"] = f"{year} {brand} {model}"
+            if sv and "vehicle_id" in sv:
+                session.fetch_predictions.clear()
             st.switch_page("pages/Results.py")
         except Exception as e:
             st.error(f"Prediction failed: {e}")

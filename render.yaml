@@ -15,6 +15,8 @@ services:
         generateValue: true
       - key: DB_CONNECT_TIMEOUT
         value: 10
+      - key: ALLOWED_ORIGINS
+        sync: false
       - key: CREATE_DB_TABLES_ON_STARTUP
         value: false
       - key: LOAD_MODELS_ON_STARTUP

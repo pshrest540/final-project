@@ -19,31 +19,42 @@ el = results["electrical"]
 en = results["engine"]
 overall = results["overall_avg"]
 
+# Map component_key → display name for replaced badge lookup
+_KEY_TO_DISPLAY = {
+    "cv_joints": "CV Joints", "wheel_bearings": "Wheel Bearings", "brakes": "Brakes",
+    "battery": "Battery", "alternator": "Alternator", "starter": "Starter",
+    "coolant_system": "Coolant System", "ignition": "Ignition", "fuel_system": "Fuel System",
+}
+_replaced_display = {
+    _KEY_TO_DISPLAY[k] for k in results.get("replacements_applied", [])
+    if k in _KEY_TO_DISPLAY
+}
+
 _user   = st.session_state.get("user", {})
 _is_biz = isinstance(_user, dict) and _user.get("account_type") == "business"
 
 # ── Theme tokens ──────────────────────────────────────────────────────────────
-_bg      = "#f0f4f8"  if _is_biz else "#0a0e1a"
-_accent  = "#0066b3"  if _is_biz else "#00d4ff"
-_fg      = "#1a2a3a"  if _is_biz else "#c8d8e8"
-_fg2     = "#4a6a8a"  if _is_biz else "#5a7a9a"
-_fg3     = "#3a5a7a"  if _is_biz else "#3a5a7a"
-_border  = "#d0dce8"  if _is_biz else "#1e3a5f"
-_card_g  = "#ffffff"  if _is_biz else "linear-gradient(135deg,#0f1628 0%,#111827 100%)"
-_ov_g    = "linear-gradient(135deg,#ffffff 0%,#f0f4f8 100%)" if _is_biz else "linear-gradient(135deg,#0f1628 0%,#0d1f35 100%)"
-_bar_bg  = "#e4eef8"  if _is_biz else "#0d1526"
-_rec_bg  = "#f8fafc"  if _is_biz else "#0f1628"
+_bg      = "#f0f4f8"  if _is_biz else "#070707"
+_accent  = "#0066b3"  if _is_biz else "#ffffff"
+_fg      = "#1a2a3a"  if _is_biz else "#f0f0f0"
+_fg2     = "#4a6a8a"  if _is_biz else "#555555"
+_fg3     = "#3a5a7a"  if _is_biz else "#3a3a3a"
+_border  = "#d0dce8"  if _is_biz else "#1e1e1e"
+_card_g  = "#ffffff"  if _is_biz else "#0c0c0c"
+_ov_g    = "linear-gradient(135deg,#ffffff 0%,#f0f4f8 100%)" if _is_biz else "#0c0c0c"
+_bar_bg  = "#e4eef8"  if _is_biz else "#141414"
+_rec_bg  = "#f8fafc"  if _is_biz else "#0e0e0e"
 _top     = f"linear-gradient(90deg,transparent,{_accent},transparent)"
-_gauge_bg     = "#f0f4f8"  if _is_biz else "#0d1526"
-_gauge_border = "#c8d8e8"  if _is_biz else "#1e3a5f"
-_gauge_tick   = "#4a6a8a"  if _is_biz else "#3a5a7a"
-_gauge_font   = "#1a2a3a"  if _is_biz else "#c8d8e8"
+_gauge_bg     = "#f0f4f8"  if _is_biz else "#0e0e0e"
+_gauge_border = "#c8d8e8"  if _is_biz else "#1e1e1e"
+_gauge_tick   = "#4a6a8a"  if _is_biz else "#3a3a3a"
+_gauge_font   = "#1a2a3a"  if _is_biz else "#f0f0f0"
 _gauge_steps  = [
-    {"range": [0,  40], "color": "#fff0f0" if _is_biz else "#1a0a0a"},
-    {"range": [40, 65], "color": "#fff9eb" if _is_biz else "#1a1500"},
-    {"range": [65, 100], "color": "#f0fff4" if _is_biz else "#0a1a0f"},
+    {"range": [0,  40], "color": "#fff0f0" if _is_biz else "#160a0a"},
+    {"range": [40, 65], "color": "#fff9eb" if _is_biz else "#141200"},
+    {"range": [65, 100], "color": "#f0fff4" if _is_biz else "#0a130c"},
 ]
-_comp_header_c = "#4a6a8a" if _is_biz else "#8aabcc"
+_comp_header_c = "#4a6a8a" if _is_biz else "#6a6a6a"
 _btn_ghost_border = _border
 _btn_ghost_c  = _fg2
 _btn_ghost_hc = _accent
@@ -52,7 +63,7 @@ st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
 html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-color: {_bg}; color: {_fg}; }}
-.stApp {{ background: {_bg}; }}
+.stApp {{ background: {"radial-gradient(ellipse 120% 50% at 50% 0%, #131313 0%, #070707 60%)" if not _is_biz else _bg}; }}
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding-top: 1.5rem; padding-bottom: 2rem; }}
 .overall-card {{ background: {_ov_g}; border: 1px solid {_border}; border-radius: 16px; padding: 2rem 2.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }}
@@ -100,15 +111,17 @@ def status_text(s):
 def bar_color(s):
     return score_color(s)
 
-def render_system_card(title, title_color, card_class, avg, avg_color, components):
+def render_system_card(title, title_color, card_class, avg, avg_color, components, replaced=None):
+    replaced = replaced or set()
     bars_html = ""
     for name, score in components:
-        color = bar_color(score)
-        pct   = min(100, max(0, score))
+        color    = bar_color(score)
+        pct      = min(100, max(0, score))
+        badge    = ' <span style="font-family:\'Share Tech Mono\',monospace;font-size:0.55rem;background:#1a4a1a;color:#00c864;border:1px solid #00c864;border-radius:4px;padding:0.05rem 0.3rem;letter-spacing:0.08em;vertical-align:middle">REPLACED</span>' if name in replaced else ""
         bars_html += f"""
         <div class="comp-row">
             <div class="comp-header">
-                <span class="comp-name">{name}</span>
+                <span class="comp-name">{name}{badge}</span>
                 <span class="comp-score" style="color:{color}">{score:.1f}</span>
             </div>
             <div class="comp-bar-bg">
@@ -202,7 +215,7 @@ with col1:
         ("Coolant System", en["coolant_wellness"]),
         ("Ignition",       en["ignition_wellness"]),
         ("Fuel System",    en["fuel_wellness"]),
-    ])
+    ], replaced=_replaced_display)
     st.plotly_chart(gauge_fig(en["system_avg"], en_color), use_container_width=True)
 
 with col2:
@@ -211,7 +224,7 @@ with col2:
         ("CV Joints",      dt["cv_wellness"]),
         ("Wheel Bearings", dt["wb_wellness"]),
         ("Brakes",         dt["brk_wellness"]),
-    ])
+    ], replaced=_replaced_display)
     st.plotly_chart(gauge_fig(dt["system_avg"], dt_color), use_container_width=True)
 
 with col3:
@@ -220,7 +233,7 @@ with col3:
         ("Battery",    el["bat_wellness"]),
         ("Alternator", el["alt_wellness"]),
         ("Starter",    el["sta_wellness"]),
-    ])
+    ], replaced=_replaced_display)
     st.plotly_chart(gauge_fig(el["system_avg"], el_color), use_container_width=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
