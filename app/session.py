@@ -111,6 +111,16 @@ def fetch_linked_customers(token: str) -> Optional[list]:
 
 
 @st.cache_data(ttl=30, show_spinner=False)
+def fetch_linked_businesses(token: str) -> Optional[list]:
+    try:
+        r = get("/sharing/businesses", token=token)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return None
+
+
+@st.cache_data(ttl=30, show_spinner=False)
 def fetch_predictions(vehicle_id: str, token: str) -> Optional[list]:
     try:
         r = get(f"/vehicles/{vehicle_id}/predictions", token=token)

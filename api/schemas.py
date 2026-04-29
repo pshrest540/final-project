@@ -253,8 +253,13 @@ class LogReplacementRequest(BaseModel):
 
 # Sharing schemas
 
+class PairingCodeOut(BaseModel):
+    code: str
+    expires_at: datetime
+
+
 class CustomerLinkCreate(BaseModel):
-    share_code: str = Field(..., min_length=6, max_length=6, pattern=r"^\d{6}$")
+    pairing_code: str = Field(..., min_length=5, max_length=5)
 
 
 class LinkedCustomerOut(BaseModel):
@@ -263,6 +268,12 @@ class LinkedCustomerOut(BaseModel):
     full_name: Optional[str] = None
     business_name: Optional[str] = None
     shared_vehicle_count: int = 0
+
+
+class LinkedBusinessOut(BaseModel):
+    user_id: str
+    email: str
+    business_name: Optional[str] = None
 
 
 # ── Service log schemas ───────────────────────────────────────────────────────

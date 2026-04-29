@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.db.session import get_db
-from api.db.models import BusinessCustomerLink, User, Vehicle, WellnessPrediction
+from api.db.models import BusinessCustomerLink, ServiceProposal, User, Vehicle, WellnessPrediction
 from api.schemas import (
     PredictionOut,
     VehicleCreate,
@@ -176,6 +176,16 @@ def update_vehicle_sharing(
 ):
     vehicle = _get_owned_vehicle(vehicle_id, current_user, db)
     vehicle.share_enabled = body.share_enabled
+    if not body.share_enabled:
+        # Cancel all pending proposals for this vehicle so nothing lingers after sharing is revoked
+        (
+            db.query(ServiceProposal)
+            .filter(
+                ServiceProposal.vehicle_id == vehicle_id,
+                ServiceProposal.status == "pending",
+            )
+            .update({"status": "cancelled"}, synchronize_session=False)
+        )
     db.commit()
     db.refresh(vehicle)
     return _vehicle_out(vehicle)

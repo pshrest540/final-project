@@ -107,25 +107,26 @@ if _is_biz:
     with st.form("link_customer_form", clear_on_submit=True):
         c_code, c_btn = st.columns([3, 1])
         with c_code:
-            share_code = st.text_input(
-                "Customer share ID",
-                max_chars=6,
-                placeholder="123456",
-                key="customer_share_code",
+            pairing_code = st.text_input(
+                "Customer connection code",
+                max_chars=5,
+                placeholder="AB3X7",
+                key="customer_pairing_code",
+                help="Ask the customer to open the Connect page and share their 5-character code with you.",
             )
         with c_btn:
             st.markdown("<br>", unsafe_allow_html=True)
             submitted_link = st.form_submit_button("ADD")
         if submitted_link:
-            clean_code = "".join(ch for ch in share_code.strip() if ch.isdigit())
-            if len(clean_code) != 6:
-                st.error("Enter the customer's 6 digit share ID.")
+            clean = pairing_code.strip().upper()
+            if len(clean) != 5:
+                st.error("Enter the customer's 5-character connection code.")
             else:
                 try:
                     r = session.post(
                         "/sharing/customers",
                         token=st.session_state["token"],
-                        json={"share_code": clean_code},
+                        json={"pairing_code": clean},
                     )
                     if r.status_code in (200, 201):
                         session.fetch_linked_customers.clear()
@@ -163,10 +164,60 @@ else:
         f'<div class="share-panel">'
         f'<div class="share-muted">YOUR SHARE ID</div>'
         f'<div class="share-code">{html.escape(share_code)}</div>'
-        f'<div class="share-muted" style="margin-top:0.5rem">Give this code to a service provider to link your account.</div>'
         f'</div>',
         unsafe_allow_html=True,
     )
+    _conn_col, _conn_btn = st.columns([3, 1])
+    with _conn_col:
+        st.markdown(
+            f'<div class="share-panel" style="margin-bottom:0">'
+            f'<div class="share-muted">LINK A SERVICE PROVIDER</div>'
+            f'<div style="font-size:0.82rem;color:{_fg2};margin-top:0.3rem">Generate a one-time connection code to share with your mechanic or dealer.</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    with _conn_btn:
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("CONNECT", key="connect_biz", use_container_width=True):
+            st.switch_page("pages/Connect.py")
+
+    # ── Connected businesses ────────────────────────────────────────────────
+    linked_businesses = session.fetch_linked_businesses(st.session_state["token"]) or []
+    if linked_businesses:
+        st.markdown('<div class="share-panel">', unsafe_allow_html=True)
+        st.markdown('<div class="section-label">// CONNECTED BUSINESSES</div>', unsafe_allow_html=True)
+        for biz in linked_businesses:
+            biz_label = html.escape(biz.get("business_name") or biz.get("email") or biz["user_id"])
+            b_label, b_remove = st.columns([4, 1])
+            with b_label:
+                st.markdown(
+                    f'<div style="font-family:\'Rajdhani\',sans-serif;font-size:1.1rem;font-weight:700;color:{_fg};margin-bottom:0.3rem">{biz_label}</div>',
+                    unsafe_allow_html=True,
+                )
+            with b_remove:
+                if st.button("REMOVE", key=f"unbiz_{biz['user_id']}"):
+                    st.session_state[f"confirm_unbiz_{biz['user_id']}"] = True
+                    st.rerun()
+            if st.session_state.get(f"confirm_unbiz_{biz['user_id']}"):
+                st.warning(f"Remove **{biz_label}**? They will lose access to all your shared vehicles and all pending proposals will be cancelled.")
+                _cc1, _cc2 = st.columns(2)
+                with _cc1:
+                    if st.button("CONFIRM REMOVE", key=f"unbiz_confirm_{biz['user_id']}", use_container_width=True):
+                        try:
+                            r = session.delete(f"/sharing/businesses/{biz['user_id']}", token=st.session_state["token"])
+                            r.raise_for_status()
+                            session.fetch_linked_businesses.clear()
+                            session.fetch_incoming_proposals.clear()
+                            st.session_state.pop(f"confirm_unbiz_{biz['user_id']}", None)
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Could not remove business: {e}")
+                with _cc2:
+                    if st.button("CANCEL", key=f"unbiz_cancel_{biz['user_id']}", use_container_width=True):
+                        st.session_state.pop(f"confirm_unbiz_{biz['user_id']}", None)
+                        st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
     # ── Pending proposal notification ──────────────────────────────────────
     incoming = session.fetch_incoming_proposals(st.session_state["token"]) or []
     pending_count = sum(1 for p in incoming if p["status"] == "pending")

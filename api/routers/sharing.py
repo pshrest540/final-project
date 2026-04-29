@@ -3,10 +3,12 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from api.db.models import BusinessCustomerLink, User, Vehicle
+from datetime import datetime, timezone
+
+from api.db.models import BusinessCustomerLink, PairingCode, ServiceProposal, User, Vehicle
 from api.db.session import get_db
 from api.dependencies import get_current_user
-from api.schemas import CustomerLinkCreate, LinkedCustomerOut
+from api.schemas import CustomerLinkCreate, LinkedBusinessOut, LinkedCustomerOut
 
 router = APIRouter(prefix="/sharing", tags=["Sharing"])
 
@@ -57,13 +59,20 @@ def link_customer(
     db: Session = Depends(get_db),
 ):
     _require_business(current_user)
-    customer = db.query(User).filter(User.share_code == body.share_code).first()
+
+    pairing = db.query(PairingCode).filter(PairingCode.code == body.pairing_code.upper()).first()
+    if not pairing:
+        raise HTTPException(status_code=404, detail="Invalid connection code")
+
+    exp = pairing.expires_at
+    if exp.tzinfo is None:
+        exp = exp.replace(tzinfo=timezone.utc)
+    if exp <= datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Connection code has expired — ask the customer to generate a new one")
+
+    customer = db.query(User).filter(User.user_id == pairing.user_id).first()
     if not customer:
-        raise HTTPException(status_code=404, detail="No customer found with that share ID")
-    if customer.user_id == current_user.user_id:
-        raise HTTPException(status_code=400, detail="You cannot link your own account")
-    if customer.account_type != "personal":
-        raise HTTPException(status_code=400, detail="Share ID must belong to a customer account")
+        raise HTTPException(status_code=404, detail="Customer account not found")
 
     existing = (
         db.query(BusinessCustomerLink)
@@ -81,7 +90,9 @@ def link_customer(
                 customer_user_id=customer.user_id,
             )
         )
-        db.commit()
+    # Invalidate the code after successful use
+    db.delete(pairing)
+    db.commit()
     return _linked_customer_out(customer, db)
 
 
@@ -102,6 +113,85 @@ def unlink_customer(
     )
     if not link:
         raise HTTPException(status_code=404, detail="Customer link not found")
+    # Cancel all pending proposals between this business and the customer's vehicles
+    customer_vehicle_ids = [
+        v.vehicle_id
+        for v in db.query(Vehicle).filter(Vehicle.owner_id == customer_user_id).all()
+    ]
+    if customer_vehicle_ids:
+        (
+            db.query(ServiceProposal)
+            .filter(
+                ServiceProposal.business_user_id == current_user.user_id,
+                ServiceProposal.vehicle_id.in_(customer_vehicle_ids),
+                ServiceProposal.status == "pending",
+            )
+            .update({"status": "cancelled"}, synchronize_session=False)
+        )
+    db.delete(link)
+    db.commit()
+    return None
+
+
+@router.get("/businesses", response_model=list[LinkedBusinessOut])
+def list_linked_businesses(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Customer: see which businesses are linked to their account."""
+    if current_user.account_type == "business":
+        raise HTTPException(status_code=403, detail="Customers only")
+    rows = (
+        db.query(User)
+        .join(BusinessCustomerLink, BusinessCustomerLink.business_user_id == User.user_id)
+        .filter(BusinessCustomerLink.customer_user_id == current_user.user_id)
+        .order_by(User.email.asc())
+        .all()
+    )
+    return [
+        LinkedBusinessOut(
+            user_id=u.user_id,
+            email=u.email,
+            business_name=u.business_name,
+        )
+        for u in rows
+    ]
+
+
+@router.delete("/businesses/{business_user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def unlink_business(
+    business_user_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Customer: remove a business from their account and cancel all pending proposals from them."""
+    if current_user.account_type == "business":
+        raise HTTPException(status_code=403, detail="Customers only")
+    link = (
+        db.query(BusinessCustomerLink)
+        .filter(
+            BusinessCustomerLink.business_user_id == business_user_id,
+            BusinessCustomerLink.customer_user_id == current_user.user_id,
+        )
+        .first()
+    )
+    if not link:
+        raise HTTPException(status_code=404, detail="Business link not found")
+    # Cancel all pending proposals from this business across all customer vehicles
+    my_vehicle_ids = [
+        v.vehicle_id
+        for v in db.query(Vehicle).filter(Vehicle.owner_id == current_user.user_id).all()
+    ]
+    if my_vehicle_ids:
+        (
+            db.query(ServiceProposal)
+            .filter(
+                ServiceProposal.business_user_id == business_user_id,
+                ServiceProposal.vehicle_id.in_(my_vehicle_ids),
+                ServiceProposal.status == "pending",
+            )
+            .update({"status": "cancelled"}, synchronize_session=False)
+        )
     db.delete(link)
     db.commit()
     return None

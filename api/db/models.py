@@ -175,6 +175,14 @@ class ServiceLog(Base):
     vehicle = relationship("Vehicle", back_populates="service_logs")
 
 
+class PairingCode(Base):
+    __tablename__ = "pairing_codes"
+
+    user_id    = Column(String(36), ForeignKey("users.user_id", ondelete="CASCADE"), primary_key=True)
+    code       = Column(String(5),  unique=True, nullable=False)
+    expires_at = Column(TIMESTAMP(timezone=True), nullable=False)
+
+
 class ServiceProposal(Base):
     __tablename__ = "service_proposals"
 

@@ -229,6 +229,14 @@ create table if not exists service_log (
 );
 
 create index if not exists idx_service_log_vehicle   on service_log(vehicle_id);
+
+create table if not exists pairing_codes (
+    user_id    varchar(36) primary key references users(user_id) on delete cascade,
+    code       varchar(5)  not null,
+    expires_at timestamp with time zone not null
+);
+
+create unique index if not exists idx_pairing_codes_code on pairing_codes(code);
 create index if not exists idx_service_log_entry_type on service_log(entry_type);
 create index if not exists idx_service_log_task_key  on service_log(task_key);
 create index if not exists idx_service_log_logged_at on service_log(logged_at desc);
