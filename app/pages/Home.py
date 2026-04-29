@@ -12,6 +12,10 @@ st.set_page_config(
 if "token" not in st.session_state:
     st.switch_page("pages/Login.py")
 
+_fresh_user = session.fetch_current_user(st.session_state["token"])
+if _fresh_user:
+    st.session_state["user"] = _fresh_user
+
 _user   = st.session_state.get("user", {})
 _is_biz = isinstance(_user, dict) and _user.get("account_type") == "business"
 
@@ -51,6 +55,10 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 .v-mileage {{ font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: {_accent}; margin-bottom: 0.3rem; }}
 .v-customer {{ font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: {_fg2}; letter-spacing: 0.08em; margin-bottom: 0.3rem; }}
 .v-vin {{ font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; color: {_vin_color}; letter-spacing: 0.1em; }}
+.share-panel {{ background: {_card_g}; border: 1px solid {_border}; border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }}
+.share-code {{ font-family: 'Share Tech Mono', monospace; font-size: 1.45rem; color: {_accent}; letter-spacing: 0.25em; }}
+.share-muted {{ font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: {_fg2}; letter-spacing: 0.12em; text-transform: uppercase; }}
+.share-badge {{ display:inline-block; font-family:'Share Tech Mono',monospace; font-size:0.58rem; letter-spacing:0.12em; color:{_accent}; border:1px solid {_border}; border-radius:999px; padding:0.2rem 0.5rem; margin-bottom:0.4rem; }}
 .empty-state {{ background: {_empty_bg}; border: {_empty_border}; border-radius: 10px; padding: 2rem; text-align: center; color: {_fg2}; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; margin: 1rem 0; }}
 .stButton > button {{ background: {_btn_g} !important; color: {_btn_c} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.8rem !important; font-weight: 700 !important; letter-spacing: 0.12em !important; border: none !important; border-radius: 8px !important; padding: 0.55rem 1rem !important; text-transform: uppercase !important; box-shadow: 0 0 15px {_shadow} !important; }}
 .stButton > button:hover {{ box-shadow: 0 0 28px {_shadow_h} !important; }}
@@ -70,11 +78,16 @@ with _tr:
         f'font-size:0.7rem;color:{_fg2};margin:0;padding-top:0.35rem">{_email}</p>',
         unsafe_allow_html=True,
     )
-    if st.button("LOGOUT", key="logout"):
-        st.session_state.pop("token", None)
-        st.session_state.pop("user", None)
-        st.session_state.pop("selected_vehicle", None)
-        st.switch_page("pages/Login.py")
+    _btn_acct, _btn_lo = st.columns(2)
+    with _btn_acct:
+        if st.button("ACCOUNT", key="account", use_container_width=True):
+            st.switch_page("pages/Account.py")
+    with _btn_lo:
+        if st.button("LOGOUT", key="logout", use_container_width=True):
+            st.session_state.pop("token", None)
+            st.session_state.pop("user", None)
+            st.session_state.pop("selected_vehicle", None)
+            st.switch_page("pages/Login.py")
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
@@ -88,6 +101,87 @@ st.markdown(
 )
 
 # ── Vehicles section ──────────────────────────────────────────────────────────
+if _is_biz:
+    st.markdown('<div class="share-panel">', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">// ADD CUSTOMER</div>', unsafe_allow_html=True)
+    with st.form("link_customer_form", clear_on_submit=True):
+        c_code, c_btn = st.columns([3, 1])
+        with c_code:
+            share_code = st.text_input(
+                "Customer share ID",
+                max_chars=6,
+                placeholder="123456",
+                key="customer_share_code",
+            )
+        with c_btn:
+            st.markdown("<br>", unsafe_allow_html=True)
+            submitted_link = st.form_submit_button("ADD")
+        if submitted_link:
+            clean_code = "".join(ch for ch in share_code.strip() if ch.isdigit())
+            if len(clean_code) != 6:
+                st.error("Enter the customer's 6 digit share ID.")
+            else:
+                try:
+                    r = session.post(
+                        "/sharing/customers",
+                        token=st.session_state["token"],
+                        json={"share_code": clean_code},
+                    )
+                    if r.status_code in (200, 201):
+                        session.fetch_linked_customers.clear()
+                        session.fetch_vehicles.clear()
+                        st.success("Customer linked.")
+                        st.rerun()
+                    else:
+                        st.error(r.json().get("detail", "Could not link customer."))
+                except Exception as e:
+                    st.error(f"Could not link customer: {e}")
+
+    linked_customers = session.fetch_linked_customers(st.session_state["token"])
+    if linked_customers:
+        st.markdown('<div class="share-muted">LINKED CUSTOMERS</div>', unsafe_allow_html=True)
+        for customer in linked_customers:
+            cust_name = customer.get("full_name") or customer.get("email") or customer["user_id"]
+            badge = f'{html.escape(cust_name)} | {customer.get("shared_vehicle_count", 0)} shared'
+            b_label, b_remove = st.columns([4, 1])
+            with b_label:
+                st.markdown(f'<span class="share-badge">{badge}</span>', unsafe_allow_html=True)
+            with b_remove:
+                if st.button("REMOVE", key=f"unlink_{customer['user_id']}"):
+                    try:
+                        r = session.delete(f"/sharing/customers/{customer['user_id']}", token=st.session_state["token"])
+                        r.raise_for_status()
+                        session.fetch_linked_customers.clear()
+                        session.fetch_vehicles.clear()
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Could not remove customer: {e}")
+    st.markdown('</div>', unsafe_allow_html=True)
+else:
+    share_code = (_user.get("share_code") if isinstance(_user, dict) else "") or "------"
+    st.markdown(
+        f'<div class="share-panel">'
+        f'<div class="share-muted">YOUR SHARE ID</div>'
+        f'<div class="share-code">{html.escape(share_code)}</div>'
+        f'<div class="share-muted" style="margin-top:0.5rem">Give this code to a service provider to link your account.</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+    # ── Pending proposal notification ──────────────────────────────────────
+    incoming = session.fetch_incoming_proposals(st.session_state["token"]) or []
+    pending_count = sum(1 for p in incoming if p["status"] == "pending")
+    if pending_count > 0:
+        st.markdown(
+            f'<div class="share-panel" style="border-color:{"#f59e0b"};background:{"rgba(245,158,11,0.06)" if _is_biz else "rgba(245,158,11,0.08)"}">'
+            f'<div class="share-muted" style="color:#f59e0b">PENDING SERVICE PROPOSALS</div>'
+            f'<div style="font-family:\'Share Tech Mono\',monospace;font-size:1.1rem;color:#f59e0b;margin-top:0.3rem">'
+            f'{pending_count} PROPOSAL{"S" if pending_count != 1 else ""} AWAITING YOUR REVIEW</div>'
+            f'<div style="font-size:0.78rem;color:{_fg2};margin-top:0.4rem">'
+            f'Open a vehicle\'s details page to accept or deny each proposal.</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
 _vh, _vadd = st.columns([3, 1])
 with _vh:
     _sec = "// FLEET VEHICLES" if _is_biz else "// YOUR VEHICLES"
@@ -110,10 +204,16 @@ else:
     cols = st.columns(3, gap="medium")
     for i, v in enumerate(vehicles):
         with cols[i % 3]:
+            _shared = bool(v.get("is_shared"))
             _vin  = f'<div class="v-vin">VIN: {html.escape(v["vin"])}</div>' if v.get("vin") else ""
-            _cust = f'<div class="v-customer">CUSTOMER: {html.escape(v["customer_name"])}</div>' if (_is_biz and v.get("customer_name")) else ""
+            _cust_name = v.get("customer_name")
+            if _shared:
+                _cust_name = _cust_name or v.get("owner_name") or v.get("owner_email")
+            _cust = f'<div class="v-customer">CUSTOMER: {html.escape(_cust_name)}</div>' if (_is_biz and _cust_name) else ""
+            _shared_badge = '<div class="share-badge">SHARED</div>' if _shared else ""
             st.markdown(
                 f'<div class="v-card">'
+                f'{_shared_badge}'
                 f'<div class="v-year">// {v["year"]}</div>'
                 f'<div class="v-name">{html.escape(v["brand"])} {html.escape(v["model"])}</div>'
                 f'{_cust}'
@@ -122,9 +222,28 @@ else:
                 f'</div>',
                 unsafe_allow_html=True,
             )
+            if not _is_biz:
+                share_value = bool(v.get("share_enabled"))
+                new_share_value = st.toggle(
+                    "SHARE WITH DEALER",
+                    value=share_value,
+                    key=f"share_toggle_{v['vehicle_id']}",
+                )
+                if new_share_value != share_value:
+                    try:
+                        r = session.patch(
+                            f"/vehicles/{v['vehicle_id']}/sharing",
+                            token=st.session_state["token"],
+                            json={"share_enabled": new_share_value},
+                        )
+                        r.raise_for_status()
+                        session.fetch_vehicles.clear()
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Could not update sharing: {e}")
             _ba, _bd = st.columns(2)
             with _ba:
-                if st.button("⚡ ANALYZE", key=f"analyze_{v['vehicle_id']}"):
+                if st.button("⚡ ANALYZE", key=f"analyze_{v['vehicle_id']}", disabled=_shared):
                     st.session_state["selected_vehicle"] = v
                     st.switch_page("Vehicle_Input.py")
             with _bd:

@@ -1,6 +1,6 @@
 from sqlalchemy import (
     Column, String, Integer, Float, Text, Date, TIMESTAMP,
-    ForeignKey, Enum, UniqueConstraint
+    ForeignKey, Enum, UniqueConstraint, Boolean
 )
 from sqlalchemy import text
 from sqlalchemy.orm import relationship
@@ -19,6 +19,7 @@ class User(Base):
         nullable=False,
         server_default="personal",
     )
+    share_code = Column(String(6), unique=True, nullable=True)
     business_name = Column(String(255), nullable=True)
     full_name = Column(String(255), nullable=True)
     created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
@@ -38,6 +39,7 @@ class Vehicle(Base):
     year = Column(Integer, nullable=False)
     current_mileage = Column(Integer, nullable=False)
     customer_name = Column(String(100), nullable=True)
+    share_enabled = Column(Boolean, nullable=False, server_default=text("false"))
     added_on = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
     owner = relationship("User", back_populates="vehicles")
@@ -46,6 +48,7 @@ class Vehicle(Base):
     predictions = relationship("WellnessPrediction", back_populates="vehicle", cascade="all, delete")
     scheduled_maintenance = relationship("ScheduledMaintenance", back_populates="vehicle", cascade="all, delete")
     component_replacements = relationship("ComponentReplacement", back_populates="vehicle", cascade="all, delete")
+    service_logs = relationship("ServiceLog", back_populates="vehicle", cascade="all, delete")
 
 
 class VehicleHabit(Base):
@@ -138,3 +141,54 @@ class ComponentReplacement(Base):
     vehicle = relationship("Vehicle", back_populates="component_replacements")
 
     __table_args__ = (UniqueConstraint("vehicle_id", "component_key", name="uq_vehicle_component"),)
+
+
+class BusinessCustomerLink(Base):
+    __tablename__ = "business_customer_links"
+
+    id = Column(String(36), primary_key=True)
+    business_user_id = Column(String(36), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    customer_user_id = Column(String(36), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        UniqueConstraint("business_user_id", "customer_user_id", name="uq_business_customer_link"),
+    )
+
+
+class ServiceLog(Base):
+    __tablename__ = "service_log"
+
+    id = Column(String(36), primary_key=True)
+    vehicle_id = Column(String(36), ForeignKey("vehicles.vehicle_id", ondelete="CASCADE"), nullable=False)
+    entry_type = Column(String(20), nullable=False)      # 'maintenance' or 'replacement'
+    task_key = Column(String(50), nullable=False)
+    service_mileage = Column(Integer, nullable=False)
+    replacement_info = Column(String(500), nullable=True)
+    shop_name = Column(String(100), nullable=True)
+    technician_name = Column(String(100), nullable=True)
+    cost = Column(Float, nullable=True)
+    notes = Column(String(500), nullable=True)
+    logged_by_user_id = Column(String(36), ForeignKey("users.user_id", ondelete="SET NULL"), nullable=True)
+    logged_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+
+    vehicle = relationship("Vehicle", back_populates="service_logs")
+
+
+class ServiceProposal(Base):
+    __tablename__ = "service_proposals"
+
+    id = Column(String(36), primary_key=True)
+    business_user_id = Column(String(36), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    customer_user_id = Column(String(36), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    vehicle_id = Column(String(36), ForeignKey("vehicles.vehicle_id", ondelete="CASCADE"), nullable=False)
+    proposal_type = Column(String(20), nullable=False)  # 'maintenance' or 'replacement'
+    task_key = Column(String(50), nullable=False)
+    service_mileage = Column(Integer, nullable=False)
+    replacement_info = Column(String(500), nullable=True)
+    technician_name = Column(String(100), nullable=True)
+    cost = Column(Float, nullable=True)
+    notes = Column(String(500), nullable=True)
+    status = Column(String(20), nullable=False, default="pending")
+    created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+    resolved_at = Column(TIMESTAMP, nullable=True)

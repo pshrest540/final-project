@@ -13,6 +13,8 @@ from api.db.session import engine, Base
 from api.routers.auth import router as auth_router
 from api.routers.vehicles import router as vehicles_router
 from api.routers.admin import router as admin_router
+from api.routers.sharing import router as sharing_router
+from api.routers.proposals import router as proposals_router
 
 app = FastAPI(
     title="Vehicle Maintenance Predictor API",
@@ -51,6 +53,8 @@ app.include_router(auth_router)
 app.include_router(vehicles_router)
 app.include_router(admin_router)
 app.include_router(maintenance_router)
+app.include_router(sharing_router)
+app.include_router(proposals_router)
 
 @app.get("/", tags=["Health"])
 def root():

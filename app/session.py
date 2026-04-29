@@ -81,9 +81,29 @@ def fetch_brands() -> Optional[list]:
 
 
 @st.cache_data(ttl=30, show_spinner=False)
+def fetch_current_user(token: str) -> Optional[dict]:
+    try:
+        r = get("/auth/me", token=token)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return None
+
+
+@st.cache_data(ttl=30, show_spinner=False)
 def fetch_vehicles(token: str) -> Optional[list]:
     try:
         r = get("/vehicles", token=token)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return None
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def fetch_linked_customers(token: str) -> Optional[list]:
+    try:
+        r = get("/sharing/customers", token=token)
         r.raise_for_status()
         return r.json()
     except Exception:
@@ -134,6 +154,36 @@ def fetch_maintenance(vehicle_id: str, token: str) -> Optional[list]:
 def fetch_replacements(vehicle_id: str, token: str) -> Optional[list]:
     try:
         r = get(f"/vehicles/{vehicle_id}/replacements", token=token)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return None
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def fetch_vehicle_service_log(vehicle_id: str, token: str) -> Optional[list]:
+    try:
+        r = get(f"/vehicles/{vehicle_id}/service-log", token=token)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return None
+
+
+@st.cache_data(ttl=15, show_spinner=False)
+def fetch_incoming_proposals(token: str) -> Optional[list]:
+    try:
+        r = get("/sharing/proposals/incoming", token=token)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return None
+
+
+@st.cache_data(ttl=15, show_spinner=False)
+def fetch_outgoing_proposals(token: str) -> Optional[list]:
+    try:
+        r = get("/sharing/proposals/outgoing", token=token)
         r.raise_for_status()
         return r.json()
     except Exception:

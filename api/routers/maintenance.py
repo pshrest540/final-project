@@ -1,12 +1,16 @@
 import uuid
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.db.session import get_db
-from api.db.models import User, Vehicle, ScheduledMaintenance, ComponentReplacement
-from api.schemas import MaintenanceTaskOut, LogServiceRequest, ComponentReplacementOut, LogReplacementRequest
+from api.db.models import BusinessCustomerLink, User, Vehicle, ScheduledMaintenance, ComponentReplacement, ServiceLog
+from api.schemas import (
+    MaintenanceTaskOut, LogServiceRequest,
+    ComponentReplacementOut, LogReplacementRequest,
+    ServiceLogCreate, ServiceLogOut,
+)
 from api.dependencies import get_current_user
 
 router = APIRouter(tags=["Maintenance"])
@@ -65,13 +69,33 @@ def _get_owned_vehicle(vehicle_id: str, user: User, db: Session) -> Vehicle:
     return v
 
 
+def _get_readable_vehicle(vehicle_id: str, user: User, db: Session) -> Vehicle:
+    vehicle = db.query(Vehicle).filter(Vehicle.vehicle_id == vehicle_id).first()
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+    if vehicle.owner_id == user.user_id:
+        return vehicle
+    if user.account_type == "business" and vehicle.share_enabled:
+        link = (
+            db.query(BusinessCustomerLink)
+            .filter(
+                BusinessCustomerLink.business_user_id == user.user_id,
+                BusinessCustomerLink.customer_user_id == vehicle.owner_id,
+            )
+            .first()
+        )
+        if link:
+            return vehicle
+    raise HTTPException(status_code=404, detail="Vehicle not found")
+
+
 @router.get("/vehicles/{vehicle_id}/maintenance", response_model=list[MaintenanceTaskOut])
 def get_maintenance(
     vehicle_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    vehicle = _get_owned_vehicle(vehicle_id, current_user, db)
+    vehicle = _get_readable_vehicle(vehicle_id, current_user, db)
     records = {
         r.task_key: r
         for r in db.query(ScheduledMaintenance)
@@ -140,7 +164,7 @@ def get_replacements(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    _get_owned_vehicle(vehicle_id, current_user, db)
+    _get_readable_vehicle(vehicle_id, current_user, db)
     records = (
         db.query(ComponentReplacement)
         .filter(ComponentReplacement.vehicle_id == vehicle_id)
@@ -218,4 +242,146 @@ def delete_replacement(
     if not record:
         raise HTTPException(status_code=404, detail="No replacement record found")
     db.delete(record)
+    db.commit()
+
+
+# ── Service log ───────────────────────────────────────────────────────────────
+
+ALL_TASK_NAMES: dict[str, str] = {
+    **{k: v["name"] for k, v in MAINTENANCE_TASKS.items()},
+    **COMPONENT_NAMES,
+}
+
+
+def _log_out(entry: ServiceLog) -> ServiceLogOut:
+    return ServiceLogOut(
+        id=entry.id,
+        vehicle_id=entry.vehicle_id,
+        entry_type=entry.entry_type,
+        task_key=entry.task_key,
+        task_name=ALL_TASK_NAMES.get(entry.task_key, entry.task_key),
+        service_mileage=entry.service_mileage,
+        replacement_info=entry.replacement_info,
+        shop_name=entry.shop_name,
+        technician_name=entry.technician_name,
+        cost=entry.cost,
+        notes=entry.notes,
+        logged_at=entry.logged_at,
+    )
+
+
+@router.get("/vehicles/{vehicle_id}/service-log", response_model=list[ServiceLogOut])
+def get_service_log(
+    vehicle_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    _get_readable_vehicle(vehicle_id, current_user, db)
+    entries = (
+        db.query(ServiceLog)
+        .filter(ServiceLog.vehicle_id == vehicle_id)
+        .order_by(ServiceLog.logged_at.desc())
+        .all()
+    )
+    return [_log_out(e) for e in entries]
+
+
+@router.post("/vehicles/{vehicle_id}/service-log", response_model=ServiceLogOut, status_code=status.HTTP_201_CREATED)
+def create_service_log(
+    vehicle_id: str,
+    body: ServiceLogCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if body.entry_type == "maintenance":
+        if body.task_key not in MAINTENANCE_TASKS:
+            raise HTTPException(status_code=400, detail=f"Unknown maintenance task: {body.task_key}")
+    elif body.entry_type == "replacement":
+        if body.task_key not in COMPONENT_NAMES:
+            raise HTTPException(status_code=400, detail=f"Unknown component: {body.task_key}")
+    else:
+        raise HTTPException(status_code=400, detail="entry_type must be 'maintenance' or 'replacement'")
+
+    vehicle = _get_owned_vehicle(vehicle_id, current_user, db)
+    shop_name = current_user.business_name if current_user.account_type == "business" else None
+
+    # Write full history entry
+    entry = ServiceLog(
+        id=str(uuid.uuid4()),
+        vehicle_id=vehicle_id,
+        entry_type=body.entry_type,
+        task_key=body.task_key,
+        service_mileage=body.service_mileage,
+        replacement_info=body.replacement_info,
+        shop_name=shop_name,
+        technician_name=body.technician_name,
+        cost=body.cost,
+        notes=body.notes,
+        logged_by_user_id=current_user.user_id,
+    )
+    db.add(entry)
+
+    # Also update the current-state table so the dashboard display stays accurate
+    if body.entry_type == "maintenance":
+        interval = MAINTENANCE_TASKS[body.task_key]["interval"]
+        record = (
+            db.query(ScheduledMaintenance)
+            .filter(
+                ScheduledMaintenance.vehicle_id == vehicle_id,
+                ScheduledMaintenance.task_key == body.task_key,
+            )
+            .first()
+        )
+        if record:
+            record.last_service_mileage = body.service_mileage
+        else:
+            db.add(ScheduledMaintenance(
+                id=str(uuid.uuid4()),
+                vehicle_id=vehicle_id,
+                task_key=body.task_key,
+                last_service_mileage=body.service_mileage,
+                interval_miles=interval,
+            ))
+    else:
+        record = (
+            db.query(ComponentReplacement)
+            .filter(
+                ComponentReplacement.vehicle_id == vehicle_id,
+                ComponentReplacement.component_key == body.task_key,
+            )
+            .first()
+        )
+        if record:
+            record.replaced_at_mileage = body.service_mileage
+            record.notes = body.notes
+        else:
+            db.add(ComponentReplacement(
+                id=str(uuid.uuid4()),
+                vehicle_id=vehicle_id,
+                component_key=body.task_key,
+                replaced_at_mileage=body.service_mileage,
+                notes=body.notes,
+            ))
+
+    db.commit()
+    db.refresh(entry)
+    return _log_out(entry)
+
+
+@router.delete("/vehicles/{vehicle_id}/service-log/{log_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_service_log(
+    vehicle_id: str,
+    log_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    _get_owned_vehicle(vehicle_id, current_user, db)
+    entry = (
+        db.query(ServiceLog)
+        .filter(ServiceLog.id == log_id, ServiceLog.vehicle_id == vehicle_id)
+        .first()
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Log entry not found")
+    db.delete(entry)
     db.commit()

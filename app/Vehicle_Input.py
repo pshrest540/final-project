@@ -107,6 +107,12 @@ brand_list = sorted(brand_map.keys())
 
 # Pre-fill from selected_vehicle if one was chosen on the dashboard
 sv = st.session_state.get("selected_vehicle")
+if sv and sv.get("is_shared"):
+    st.error("Shared customer vehicles are read-only for business accounts.")
+    if st.button("BACK TO DETAILS", key="shared_back_detail"):
+        st.switch_page("pages/VehicleDetail.py")
+    st.stop()
+
 if sv:
     _sv_brand = sv.get("brand")
     if _sv_brand in brand_list and st.session_state.get("brand") not in brand_list:

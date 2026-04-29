@@ -120,6 +120,7 @@ class UserOut(BaseModel):
     user_id: str
     email: str
     account_type: str
+    share_code: Optional[str] = None
     business_name: Optional[str] = None
     full_name: Optional[str] = None
 
@@ -128,6 +129,14 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user: UserOut
+
+
+class AccountUpdate(BaseModel):
+    full_name: Optional[str]     = Field(None, max_length=255)
+    business_name: Optional[str] = Field(None, max_length=255)
+    email: Optional[EmailStr]    = None
+    current_password: Optional[str] = Field(None, max_length=128)
+    new_password: Optional[str]     = Field(None, min_length=8, max_length=128)
 
 
 # ── Admin schemas ─────────────────────────────────────────────────────────────
@@ -176,7 +185,15 @@ class VehicleOut(BaseModel):
     current_mileage:  int
     vin:              Optional[str]      = None
     customer_name:    Optional[str]      = None
+    share_enabled:    bool               = False
+    is_shared:        bool               = False
+    owner_email:      Optional[str]      = None
+    owner_name:       Optional[str]      = None
     added_on:         Optional[datetime] = None
+
+
+class VehicleShareUpdate(BaseModel):
+    share_enabled: bool
 
 
 class PredictionOut(BaseModel):
@@ -232,3 +249,77 @@ class ComponentReplacementOut(BaseModel):
 class LogReplacementRequest(BaseModel):
     replaced_at_mileage: int           = Field(..., ge=0, le=2_000_000)
     notes:               Optional[str] = Field(None, max_length=255)
+
+
+# Sharing schemas
+
+class CustomerLinkCreate(BaseModel):
+    share_code: str = Field(..., min_length=6, max_length=6, pattern=r"^\d{6}$")
+
+
+class LinkedCustomerOut(BaseModel):
+    user_id: str
+    email: str
+    full_name: Optional[str] = None
+    business_name: Optional[str] = None
+    shared_vehicle_count: int = 0
+
+
+# ── Service log schemas ───────────────────────────────────────────────────────
+
+class ServiceLogCreate(BaseModel):
+    entry_type: str                 # 'maintenance' or 'replacement'
+    task_key: str
+    service_mileage: int            = Field(..., ge=0, le=2_000_000)
+    replacement_info: Optional[str] = Field(None, max_length=500)
+    technician_name: Optional[str]  = Field(None, max_length=100)
+    cost: Optional[float]           = Field(None, ge=0)
+    notes: Optional[str]            = Field(None, max_length=500)
+
+
+class ServiceLogOut(BaseModel):
+    id: str
+    vehicle_id: str
+    entry_type: str
+    task_key: str
+    task_name: str
+    service_mileage: int
+    replacement_info: Optional[str] = None
+    shop_name: Optional[str]        = None
+    technician_name: Optional[str]  = None
+    cost: Optional[float]           = None
+    notes: Optional[str]            = None
+    logged_at: Optional[datetime]   = None
+
+
+# ── Service proposal schemas ──────────────────────────────────────────────────
+
+class ServiceProposalCreate(BaseModel):
+    vehicle_id: str
+    proposal_type: str              # 'maintenance' or 'replacement'
+    task_key: str
+    service_mileage: int            = Field(..., ge=0, le=2_000_000)
+    replacement_info: Optional[str] = Field(None, max_length=500)
+    technician_name: Optional[str]  = Field(None, max_length=100)
+    cost: Optional[float]           = Field(None, ge=0)
+    notes: Optional[str]            = Field(None, max_length=500)
+
+
+class ServiceProposalOut(BaseModel):
+    id: str
+    business_user_id: str
+    customer_user_id: str
+    vehicle_id: str
+    proposal_type: str
+    task_key: str
+    task_name: str
+    service_mileage: int
+    replacement_info: Optional[str] = None
+    technician_name: Optional[str]  = None
+    cost: Optional[float]           = None
+    notes: Optional[str]            = None
+    status: str
+    created_at: Optional[datetime]  = None
+    resolved_at: Optional[datetime] = None
+    business_name: Optional[str]    = None
+    vehicle_label: Optional[str]    = None
