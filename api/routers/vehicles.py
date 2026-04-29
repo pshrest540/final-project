@@ -113,6 +113,8 @@ def create_vehicle(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if current_user.account_type == "business":
+        raise HTTPException(status_code=403, detail="Business accounts cannot add vehicles directly")
     vehicle = Vehicle(
         vehicle_id=str(uuid.uuid4()),
         owner_id=current_user.user_id,

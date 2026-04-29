@@ -242,8 +242,9 @@ with _vh:
     _sec = "// FLEET VEHICLES" if _is_biz else "// YOUR VEHICLES"
     st.markdown(f'<div class="section-label">{_sec}</div>', unsafe_allow_html=True)
 with _vadd:
-    if st.button("+ ADD VEHICLE", key="add_vehicle"):
-        st.switch_page("pages/AddVehicle.py")
+    if not _is_biz:
+        if st.button("+ ADD VEHICLE", key="add_vehicle"):
+            st.switch_page("pages/AddVehicle.py")
 
 vehicles = session.fetch_vehicles(st.session_state["token"])
 
@@ -298,9 +299,10 @@ else:
                         st.error(f"Could not update sharing: {e}")
             _ba, _bd = st.columns(2)
             with _ba:
-                if st.button("⚡ ANALYZE", key=f"analyze_{v['vehicle_id']}", disabled=_shared):
-                    st.session_state["selected_vehicle"] = v
-                    st.switch_page("Vehicle_Input.py")
+                if not _is_biz:
+                    if st.button("⚡ ANALYZE", key=f"analyze_{v['vehicle_id']}"):
+                        st.session_state["selected_vehicle"] = v
+                        st.switch_page("Vehicle_Input.py")
             with _bd:
                 if st.button("DETAILS", key=f"detail_{v['vehicle_id']}"):
                     st.session_state["selected_vehicle"] = v

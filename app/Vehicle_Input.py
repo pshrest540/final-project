@@ -18,6 +18,9 @@ if "token" not in st.session_state:
 _user   = st.session_state.get("user", {})
 _is_biz = isinstance(_user, dict) and _user.get("account_type") == "business"
 
+if _is_biz:
+    st.switch_page("pages/Home.py")
+
 # ── Theme tokens ──────────────────────────────────────────────────────────────
 _bg      = "#f0f4f8"  if _is_biz else "#070707"
 _accent  = "#0066b3"  if _is_biz else "#ffffff"

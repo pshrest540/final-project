@@ -26,8 +26,13 @@ def predict(
     vehicle = None
 
     if req.vehicle_id:
-        # Require auth and ownership before attaching a prediction to a vehicle
         user_id = decode_access_token(credentials.credentials) if credentials else None
+        if user_id:
+            from api.db.models import User as UserModel
+            _u = db.query(UserModel).filter(UserModel.user_id == user_id).first()
+            if _u and _u.account_type == "business":
+                raise HTTPException(status_code=403, detail="Business accounts cannot run vehicle analysis")
+        # Require auth and ownership before attaching a prediction to a vehicle
         if not user_id:
             raise HTTPException(status_code=401, detail="Authentication required to save predictions")
         vehicle = db.query(Vehicle).filter(
