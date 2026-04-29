@@ -25,19 +25,19 @@ _is_shared = bool(sv.get("is_shared"))
 _bg      = "#f0f4f8"  if _is_biz else "#070707"
 _accent  = "#0066b3"  if _is_biz else "#ffffff"
 _fg      = "#1a2a3a"  if _is_biz else "#f0f0f0"
-_fg2     = "#4a6a8a"  if _is_biz else "#555555"
-_border  = "#d0dce8"  if _is_biz else "#1e1e1e"
-_card_g  = "#ffffff"  if _is_biz else "#0c0c0c"
+_fg2     = "#4a6a8a"  if _is_biz else "#888888"
+_border  = "#d0dce8"  if _is_biz else "#2a2a2a"
+_card_g  = "#ffffff"  if _is_biz else "#111111"
 _btn_g   = "linear-gradient(135deg,#0066b3 0%,#004d8c 100%)" if _is_biz else "#f5f5f5"
 _btn_c   = "#ffffff"  if _is_biz else "#080808"
 _shadow  = "rgba(0,102,179,0.25)" if _is_biz else "rgba(255,255,255,0.07)"
 _shadow_h= "rgba(0,102,179,0.5)"  if _is_biz else "rgba(255,255,255,0.14)"
 _top     = f"linear-gradient(90deg,transparent,{_accent},transparent)"
-_row_bg       = "#f8fafc"            if _is_biz else "#0e0e0e"
-_vin_c        = "#7a9abc"            if _is_biz else "#3a3a3a"
-_sub_score_c  = "#4a6a8a"            if _is_biz else "#6a6a6a"
-_empty_bg     = "#f8fafc"            if _is_biz else "#0e0e0e"
-_empty_border = "1px dashed #c0d0e0" if _is_biz else "1px dashed #222222"
+_row_bg       = "#f8fafc"            if _is_biz else "#111111"
+_vin_c        = "#7a9abc"            if _is_biz else "#555555"
+_sub_score_c  = "#4a6a8a"            if _is_biz else "#888888"
+_empty_bg     = "#f8fafc"            if _is_biz else "#111111"
+_empty_border = "1px dashed #c0d0e0" if _is_biz else "1px dashed #383838"
 _inp_bg       = "#f8fafc"            if _is_biz else "#111111"
 
 st.markdown(f"""
@@ -265,18 +265,21 @@ if not _is_shared:
     with st.expander("UPDATE CURRENT MILEAGE", expanded=False):
         mi_col, btn_col = st.columns([3, 1])
         with mi_col:
-            new_mileage = st.number_input("New mileage (must be ≥ current)",
-                min_value=sv["current_mileage"], max_value=2_000_000,
-                value=sv["current_mileage"], step=100, key="new_mi")
+            new_mileage = st.number_input("New mileage",
+                min_value=0, max_value=400_000,
+                value=min(int(sv["current_mileage"]), 400_000), step=100, key="new_mi")
         with btn_col:
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("SAVE", key="save_mi"):
-                if new_mileage == sv["current_mileage"]:
+                # Validate input
+                if new_mileage > 400_000:
+                    st.error("Mileage cannot exceed 400,000 miles")
+                elif new_mileage == sv["current_mileage"]:
                     st.info("No change.")
                 else:
                     try:
                         r = session.patch(f"/vehicles/{sv['vehicle_id']}/mileage", token=_token,
-                                          json={"current_mileage": new_mileage})
+                                          json={"current_mileage": int(new_mileage)})
                         r.raise_for_status()
                         st.session_state["selected_vehicle"] = r.json()
                         session.fetch_vehicles.clear()

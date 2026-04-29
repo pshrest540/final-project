@@ -161,8 +161,6 @@ def update_mileage(
     db: Session = Depends(get_db),
 ):
     vehicle = _get_owned_vehicle(vehicle_id, current_user, db)
-    if body.current_mileage < vehicle.current_mileage:
-        raise HTTPException(status_code=400, detail="Mileage cannot be decreased")
     vehicle.current_mileage = body.current_mileage
     db.commit()
     db.refresh(vehicle)

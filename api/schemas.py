@@ -170,7 +170,7 @@ class VehicleCreate(BaseModel):
     brand: str            = Field(..., min_length=1, max_length=50)
     model: str            = Field(..., min_length=1, max_length=50)
     year: int             = Field(..., ge=1990, le=2025)
-    current_mileage: int  = Field(..., ge=0, le=2_000_000)
+    current_mileage: int  = Field(..., ge=0, le=400_000)
     vin: Optional[str]           = Field(None, min_length=17, max_length=17, pattern=r"^[A-HJ-NPR-Z0-9]{17}$")
     customer_name: Optional[str] = Field(None, max_length=100)
 
@@ -234,7 +234,7 @@ class LogServiceRequest(BaseModel):
 
 
 class VehicleMileageUpdate(BaseModel):
-    current_mileage: int = Field(..., ge=0, le=2_000_000)
+    current_mileage: int = Field(..., ge=0, le=400_000)
 
 
 # ── Component replacement schemas ─────────────────────────────────────────────

@@ -102,7 +102,34 @@ def get_maintenance(
         .filter(ScheduledMaintenance.vehicle_id == vehicle_id)
         .all()
     }
-    return [_build_out(key, records.get(key), vehicle.current_mileage) for key in MAINTENANCE_TASKS]
+    latest_logs: dict[str, ServiceLog] = {}
+    for entry in (
+        db.query(ServiceLog)
+        .filter(ServiceLog.vehicle_id == vehicle_id, ServiceLog.entry_type == "maintenance")
+        .order_by(ServiceLog.service_mileage.desc(), ServiceLog.logged_at.desc())
+        .all()
+    ):
+        latest_logs.setdefault(entry.task_key, entry)
+
+    tasks = []
+    for key in MAINTENANCE_TASKS:
+        latest = latest_logs.get(key)
+        if latest:
+            interval = records.get(key).interval_miles if records.get(key) else MAINTENANCE_TASKS[key]["interval"]
+            next_due = latest.service_mileage + interval
+            remaining = next_due - vehicle.current_mileage
+            tasks.append(MaintenanceTaskOut(
+                task_key=key,
+                task_name=MAINTENANCE_TASKS[key]["name"],
+                interval_miles=interval,
+                last_service_mileage=latest.service_mileage,
+                next_due_mileage=next_due,
+                miles_remaining=remaining,
+                status=_status(remaining),
+            ))
+        else:
+            tasks.append(_build_out(key, None, vehicle.current_mileage))
+    return tasks
 
 
 @router.post("/vehicles/{vehicle_id}/maintenance/{task_key}", response_model=MaintenanceTaskOut)
@@ -165,19 +192,23 @@ def get_replacements(
     db: Session = Depends(get_db),
 ):
     _get_readable_vehicle(vehicle_id, current_user, db)
-    records = (
-        db.query(ComponentReplacement)
-        .filter(ComponentReplacement.vehicle_id == vehicle_id)
+    latest_logs: dict[str, ServiceLog] = {}
+    for entry in (
+        db.query(ServiceLog)
+        .filter(ServiceLog.vehicle_id == vehicle_id, ServiceLog.entry_type == "replacement")
+        .order_by(ServiceLog.service_mileage.desc(), ServiceLog.logged_at.desc())
         .all()
-    )
+    ):
+        latest_logs.setdefault(entry.task_key, entry)
+
     return [
         ComponentReplacementOut(
-            component_key=r.component_key,
-            component_name=COMPONENT_NAMES.get(r.component_key, r.component_key),
-            replaced_at_mileage=r.replaced_at_mileage,
-            notes=r.notes,
+            component_key=task_key,
+            component_name=COMPONENT_NAMES.get(task_key, task_key),
+            replaced_at_mileage=entry.service_mileage,
+            notes=entry.notes,
         )
-        for r in records
+        for task_key, entry in latest_logs.items()
     ]
 
 
@@ -268,6 +299,68 @@ def _log_out(entry: ServiceLog) -> ServiceLogOut:
         notes=entry.notes,
         logged_at=entry.logged_at,
     )
+
+
+def _refresh_current_state_from_logs(vehicle_id: str, entry_type: str, task_key: str, db: Session) -> None:
+    latest = (
+        db.query(ServiceLog)
+        .filter(
+            ServiceLog.vehicle_id == vehicle_id,
+            ServiceLog.entry_type == entry_type,
+            ServiceLog.task_key == task_key,
+        )
+        .order_by(ServiceLog.service_mileage.desc(), ServiceLog.logged_at.desc())
+        .first()
+    )
+
+    if entry_type == "maintenance":
+        record = (
+            db.query(ScheduledMaintenance)
+            .filter(
+                ScheduledMaintenance.vehicle_id == vehicle_id,
+                ScheduledMaintenance.task_key == task_key,
+            )
+            .first()
+        )
+        if latest:
+            interval = MAINTENANCE_TASKS[task_key]["interval"]
+            if record:
+                record.last_service_mileage = latest.service_mileage
+                record.interval_miles = interval
+            else:
+                db.add(ScheduledMaintenance(
+                    id=str(uuid.uuid4()),
+                    vehicle_id=vehicle_id,
+                    task_key=task_key,
+                    last_service_mileage=latest.service_mileage,
+                    interval_miles=interval,
+                ))
+        elif record:
+            db.delete(record)
+
+    elif entry_type == "replacement":
+        record = (
+            db.query(ComponentReplacement)
+            .filter(
+                ComponentReplacement.vehicle_id == vehicle_id,
+                ComponentReplacement.component_key == task_key,
+            )
+            .first()
+        )
+        if latest:
+            if record:
+                record.replaced_at_mileage = latest.service_mileage
+                record.notes = latest.notes
+            else:
+                db.add(ComponentReplacement(
+                    id=str(uuid.uuid4()),
+                    vehicle_id=vehicle_id,
+                    component_key=task_key,
+                    replaced_at_mileage=latest.service_mileage,
+                    notes=latest.notes,
+                ))
+        elif record:
+            db.delete(record)
 
 
 @router.get("/vehicles/{vehicle_id}/service-log", response_model=list[ServiceLogOut])
@@ -383,5 +476,9 @@ def delete_service_log(
     )
     if not entry:
         raise HTTPException(status_code=404, detail="Log entry not found")
+    entry_type = entry.entry_type
+    task_key = entry.task_key
     db.delete(entry)
+    db.flush()
+    _refresh_current_state_from_logs(vehicle_id, entry_type, task_key, db)
     db.commit()

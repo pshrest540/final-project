@@ -23,19 +23,19 @@ _is_biz = isinstance(_user, dict) and _user.get("account_type") == "business"
 _bg      = "#f0f4f8"  if _is_biz else "#070707"
 _accent  = "#0066b3"  if _is_biz else "#ffffff"
 _fg      = "#1a2a3a"  if _is_biz else "#f0f0f0"
-_fg2     = "#4a6a8a"  if _is_biz else "#555555"
-_border  = "#d0dce8"  if _is_biz else "#1e1e1e"
-_card_g  = "#ffffff"  if _is_biz else "#0c0c0c"
+_fg2     = "#4a6a8a"  if _is_biz else "#888888"
+_border  = "#d0dce8"  if _is_biz else "#2a2a2a"
+_card_g  = "#ffffff"  if _is_biz else "#111111"
 _btn_g   = "linear-gradient(135deg,#0066b3 0%,#004d8c 100%)" if _is_biz else "#f5f5f5"
 _btn_c   = "#ffffff"  if _is_biz else "#080808"
 _shadow  = "rgba(0,102,179,0.25)" if _is_biz else "rgba(255,255,255,0.07)"
 _shadow_h= "rgba(0,102,179,0.5)"  if _is_biz else "rgba(255,255,255,0.14)"
 _top     = f"linear-gradient(90deg,transparent,{_accent},transparent)"
 _inp_bg       = "#ddeaf5"            if _is_biz else "#111111"
-_inp_border   = "#85aac7"            if _is_biz else "#2a2a2a"
+_inp_border   = "#85aac7"            if _is_biz else "#383838"
 _empty_bg     = "#f8fafc"            if _is_biz else "#0e0e0e"
-_empty_border = "1px dashed #c0d0e0" if _is_biz else "1px dashed #222222"
-_vin_color    = "#7a9abc"            if _is_biz else "#3a3a3a"
+_empty_border = "1px dashed #c0d0e0" if _is_biz else "1px dashed #383838"
+_vin_color    = "#7a9abc"            if _is_biz else "#555555"
 
 st.markdown(f"""
 <style>
@@ -224,14 +224,33 @@ else:
 
     # ── Pending proposal notification ──────────────────────────────────────
     incoming = session.fetch_incoming_proposals(st.session_state["token"]) or []
-    pending_count = sum(1 for p in incoming if p["status"] == "pending")
-    if pending_count > 0:
+    pending = [p for p in incoming if p["status"] == "pending"]
+    if pending:
+        rows_html = ""
+        for p in pending:
+            v_label  = html.escape(p.get("vehicle_label") or "Unknown Vehicle")
+            biz_name = html.escape(p.get("business_name") or "Service Provider")
+            task     = html.escape(p.get("task_name") or p.get("task_key") or "Service")
+            mileage  = f'{p["service_mileage"]:,}' if p.get("service_mileage") is not None else "—"
+            rows_html += (
+                f'<div style="display:flex;justify-content:space-between;align-items:center;'
+                f'padding:0.45rem 0;border-bottom:1px solid rgba(245,158,11,0.15)">'
+                f'<div>'
+                f'<div style="font-family:\'Share Tech Mono\',monospace;font-size:0.8rem;color:#f59e0b">{v_label}</div>'
+                f'<div style="font-size:0.75rem;color:{_fg2};margin-top:0.1rem">{task} · from {biz_name}</div>'
+                f'</div>'
+                f'<div style="font-family:\'Share Tech Mono\',monospace;font-size:0.75rem;color:#f59e0b;white-space:nowrap;margin-left:1rem">'
+                f'@ {mileage} mi</div>'
+                f'</div>'
+            )
+        pending_count = len(pending)
         st.markdown(
-            f'<div class="share-panel" style="border-color:{"#f59e0b"};background:{"rgba(245,158,11,0.06)" if _is_biz else "rgba(245,158,11,0.08)"}">'
+            f'<div class="share-panel" style="border-color:#f59e0b;background:rgba(245,158,11,0.08)">'
             f'<div class="share-muted" style="color:#f59e0b">PENDING SERVICE PROPOSALS</div>'
-            f'<div style="font-family:\'Share Tech Mono\',monospace;font-size:1.1rem;color:#f59e0b;margin-top:0.3rem">'
+            f'<div style="font-family:\'Share Tech Mono\',monospace;font-size:0.82rem;color:#f59e0b;margin-top:0.35rem;margin-bottom:0.5rem">'
             f'{pending_count} PROPOSAL{"S" if pending_count != 1 else ""} AWAITING YOUR REVIEW</div>'
-            f'<div style="font-size:0.78rem;color:{_fg2};margin-top:0.4rem">'
+            f'{rows_html}'
+            f'<div style="font-size:0.75rem;color:{_fg2};margin-top:0.6rem">'
             f'Open a vehicle\'s details page to accept or deny each proposal.</div>'
             f'</div>',
             unsafe_allow_html=True,

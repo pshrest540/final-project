@@ -26,14 +26,14 @@ html, body, [class*="css"] { font-family: 'Rajdhani', sans-serif; background-col
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding-top: 2rem; padding-bottom: 3rem; max-width: 520px; }
 .section-label { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: #ffffff; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.8rem; }
-.code-card { background: #0c0c0c; border: 1px solid #1e1e1e; border-radius: 18px; padding: 2.5rem 2rem 2rem; margin: 1rem 0 1.5rem; position: relative; overflow: hidden; text-align: center; }
+.code-card { background: #111111; border: 1px solid #2a2a2a; border-radius: 18px; padding: 2.5rem 2rem 2rem; margin: 1rem 0 1.5rem; position: relative; overflow: hidden; text-align: center; }
 .code-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #ffffff, transparent); }
-.code-label { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: #555555; letter-spacing: 0.3em; margin-bottom: 1.2rem; }
+.code-label { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: #888888; letter-spacing: 0.3em; margin-bottom: 1.2rem; }
 .code-value { font-family: 'Share Tech Mono', monospace; font-size: 4rem; font-weight: 700; color: #ffffff; letter-spacing: 0.55em; margin-right: -0.55em; line-height: 1; margin-bottom: 1rem; }
-.code-timer { font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; color: #555555; letter-spacing: 0.2em; margin-bottom: 0.4rem; }
-.code-hint { font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; color: #333333; letter-spacing: 0.15em; margin-top: 0.8rem; }
-.info-card { background: #0e0e0e; border: 1px dashed #222222; border-radius: 12px; padding: 1.2rem 1.4rem; margin-top: 1.2rem; }
-.info-step { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: #555555; letter-spacing: 0.1em; margin-bottom: 0.5rem; line-height: 1.6; }
+.code-timer { font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; color: #888888; letter-spacing: 0.2em; margin-bottom: 0.4rem; }
+.code-hint { font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; color: #666666; letter-spacing: 0.15em; margin-top: 0.8rem; }
+.info-card { background: #111111; border: 1px dashed #383838; border-radius: 12px; padding: 1.2rem 1.4rem; margin-top: 1.2rem; }
+.info-step { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: #888888; letter-spacing: 0.1em; margin-bottom: 0.5rem; line-height: 1.6; }
 .stButton > button { background: #f5f5f5 !important; color: #080808 !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.8rem !important; font-weight: 700 !important; letter-spacing: 0.12em !important; border: none !important; border-radius: 8px !important; padding: 0.55rem 1rem !important; text-transform: uppercase !important; }
 </style>
 """, unsafe_allow_html=True)
@@ -89,7 +89,7 @@ st.markdown(f"""
             el.style.color = '#ef4444';
         }} else {{
             el.textContent = mins + ':' + String(secs).padStart(2, '0');
-            el.style.color = '#555555';
+            el.style.color = '#888888';
         }}
     }}
     tick();

@@ -147,6 +147,8 @@ for entry in _entries:
                             r = session.delete(f"/vehicles/{vehicle_id}/service-log/{eid}", token=_token)
                             if r.status_code == 204:
                                 session.fetch_vehicle_service_log.clear()
+                                session.fetch_maintenance.clear()
+                                session.fetch_replacements.clear()
                                 st.session_state["confirm_delete_log"] = None
                                 st.rerun()
                             else:
