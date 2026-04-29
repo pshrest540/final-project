@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from datetime import datetime, timezone
@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from api.db.models import BusinessCustomerLink, PairingCode, ServiceProposal, User, Vehicle
 from api.db.session import get_db
 from api.dependencies import get_current_user
-from api.schemas import CustomerLinkCreate, LinkedBusinessOut, LinkedCustomerOut
+from api.schemas import CustomerLinkCreate, CustomerSearchOut, LinkedBusinessOut, LinkedCustomerOut, VehicleOut
 
 router = APIRouter(prefix="/sharing", tags=["Sharing"])
 
@@ -26,13 +26,15 @@ def _shared_vehicle_count(customer_id: str, db: Session) -> int:
     )
 
 
-def _linked_customer_out(customer: User, db: Session) -> LinkedCustomerOut:
+def _linked_customer_out(customer: User, db: Session, linked_at=None) -> LinkedCustomerOut:
     return LinkedCustomerOut(
         user_id=customer.user_id,
         email=customer.email,
         full_name=customer.full_name,
         business_name=customer.business_name,
+        share_code=customer.share_code,
         shared_vehicle_count=_shared_vehicle_count(customer.user_id, db),
+        linked_at=linked_at,
     )
 
 
@@ -43,13 +45,61 @@ def list_linked_customers(
 ):
     _require_business(current_user)
     rows = (
-        db.query(User)
+        db.query(User, BusinessCustomerLink.created_at)
         .join(BusinessCustomerLink, BusinessCustomerLink.customer_user_id == User.user_id)
         .filter(BusinessCustomerLink.business_user_id == current_user.user_id)
         .order_by(User.email.asc())
         .all()
     )
-    return [_linked_customer_out(customer, db) for customer in rows]
+    return [_linked_customer_out(customer, db, linked_at=linked_at) for customer, linked_at in rows]
+
+
+@router.get("/search", response_model=CustomerSearchOut)
+def search_customer_by_share_code(
+    share_code: str = Query(..., min_length=6, max_length=6),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    _require_business(current_user)
+    customer = db.query(User).filter(User.share_code == share_code.upper()).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="No customer found with this ID")
+
+    link = (
+        db.query(BusinessCustomerLink)
+        .filter(
+            BusinessCustomerLink.business_user_id == current_user.user_id,
+            BusinessCustomerLink.customer_user_id == customer.user_id,
+        )
+        .first()
+    )
+
+    display_name = customer.full_name or customer.email
+    vehicles: list[VehicleOut] = []
+    if link:
+        rows = (
+            db.query(Vehicle)
+            .filter(Vehicle.owner_id == customer.user_id, Vehicle.share_enabled.is_(True))
+            .order_by(Vehicle.added_on.desc())
+            .all()
+        )
+        for v in rows:
+            vehicles.append(VehicleOut(
+                vehicle_id=v.vehicle_id,
+                brand=v.brand,
+                model=v.model,
+                year=v.year,
+                current_mileage=v.current_mileage,
+                vin=v.vin,
+                customer_name=v.customer_name,
+                share_enabled=True,
+                is_shared=True,
+                owner_email=customer.email,
+                owner_name=display_name,
+                added_on=v.added_on,
+            ))
+
+    return CustomerSearchOut(display_name=display_name, linked=bool(link), vehicles=vehicles)
 
 
 @router.post("/customers", response_model=LinkedCustomerOut, status_code=status.HTTP_201_CREATED)
@@ -93,7 +143,7 @@ def link_customer(
     # Invalidate the code after successful use
     db.delete(pairing)
     db.commit()
-    return _linked_customer_out(customer, db)
+    return _linked_customer_out(customer, db, linked_at=datetime.now(timezone.utc))
 
 
 @router.delete("/customers/{customer_user_id}", status_code=status.HTTP_204_NO_CONTENT)

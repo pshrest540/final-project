@@ -48,7 +48,8 @@ def predict(
     try:
         result = run_prediction(req, component_overrides or None)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Prediction error: {e}")
+        raise HTTPException(status_code=500, detail="Prediction failed. Please try again.")
 
     result["replacements_applied"] = list(component_overrides.keys())
 

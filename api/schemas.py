@@ -267,13 +267,21 @@ class LinkedCustomerOut(BaseModel):
     email: str
     full_name: Optional[str] = None
     business_name: Optional[str] = None
+    share_code: Optional[str] = None
     shared_vehicle_count: int = 0
+    linked_at: Optional[datetime] = None
 
 
 class LinkedBusinessOut(BaseModel):
     user_id: str
     email: str
     business_name: Optional[str] = None
+
+
+class CustomerSearchOut(BaseModel):
+    display_name: str
+    linked: bool
+    vehicles: list["VehicleOut"] = []
 
 
 # ── Service log schemas ───────────────────────────────────────────────────────

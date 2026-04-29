@@ -1,3 +1,4 @@
+import html as _html
 import streamlit as st
 import session
 
@@ -21,11 +22,11 @@ _is_biz  = isinstance(_user, dict) and _user.get("account_type") == "business"
 _biz_name = _user.get("business_name", "") if _is_biz else ""
 
 vehicle_id      = lt["vehicle_id"]
-vehicle_label   = lt["vehicle_label"]
+vehicle_label   = _html.escape(lt["vehicle_label"])
 current_mileage = lt["current_mileage"]
 entry_type      = lt["entry_type"]
 task_key        = lt["task_key"]
-task_name       = lt["task_name"]
+task_name       = _html.escape(lt["task_name"])
 
 # ── Theme tokens ──────────────────────────────────────────────────────────────
 _bg     = "#f0f4f8"  if _is_biz else "#070707"

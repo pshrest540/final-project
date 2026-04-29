@@ -186,6 +186,10 @@ def accept_proposal(
     if proposal.status != "pending":
         raise HTTPException(status_code=400, detail="Proposal is no longer pending")
 
+    _vehicle = db.query(Vehicle).filter(Vehicle.vehicle_id == proposal.vehicle_id).first()
+    if not _vehicle or not _vehicle.share_enabled:
+        raise HTTPException(status_code=403, detail="Sharing is no longer enabled for this vehicle")
+
     if proposal.proposal_type == "maintenance":
         interval = MAINTENANCE_TASKS[proposal.task_key]["interval"]
         record = (

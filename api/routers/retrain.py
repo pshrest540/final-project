@@ -18,10 +18,12 @@ def _run_training():
         [sys.executable, train_script],
         capture_output=True,
         text=True,
+        timeout=900,
     )
 
     if result.returncode != 0:
-        raise RuntimeError(f"Training failed:\n{result.stderr}")
+        print(f"Training failed (exit {result.returncode}):\n{result.stderr}")
+        raise RuntimeError("Training failed — check server logs for details.")
 
     load_all_models()
     return result.stdout

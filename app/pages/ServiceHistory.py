@@ -1,3 +1,4 @@
+import html as _html
 import streamlit as st
 import session
 
@@ -21,10 +22,10 @@ _is_biz   = isinstance(_user, dict) and _user.get("account_type") == "business"
 _is_shared = bool(ht.get("is_shared"))
 
 vehicle_id    = ht["vehicle_id"]
-vehicle_label = ht["vehicle_label"]
+vehicle_label = _html.escape(ht["vehicle_label"])
 entry_type    = ht["entry_type"]
 task_key      = ht["task_key"]
-task_name     = ht["task_name"]
+task_name     = _html.escape(ht["task_name"])
 
 # ── Theme tokens ──────────────────────────────────────────────────────────────
 _bg     = "#f0f4f8"  if _is_biz else "#070707"
@@ -106,11 +107,11 @@ for entry in _entries:
         except Exception:
             pass
 
-    shop      = entry.get("shop_name") or ""
-    tech      = entry.get("technician_name") or ""
-    rep_info  = entry.get("replacement_info") or ""
+    shop      = _html.escape(entry.get("shop_name") or "")
+    tech      = _html.escape(entry.get("technician_name") or "")
+    rep_info  = _html.escape(entry.get("replacement_info") or "")
     cost      = entry.get("cost")
-    notes     = entry.get("notes") or ""
+    notes     = _html.escape(entry.get("notes") or "")
 
     who_parts = []
     if shop:

@@ -156,32 +156,18 @@ if _is_biz:
                 except Exception as e:
                     st.error(f"Could not link customer: {e}")
 
-    linked_customers = session.fetch_linked_customers(st.session_state["token"])
-    if linked_customers:
-        st.markdown('<div class="share-muted">LINKED CUSTOMERS</div>', unsafe_allow_html=True)
-        for customer in linked_customers:
-            cust_name = customer.get("full_name") or customer.get("email") or customer["user_id"]
-            badge = f'{html.escape(cust_name)} | {customer.get("shared_vehicle_count", 0)} shared'
-            b_label, b_remove = st.columns([4, 1])
-            with b_label:
-                st.markdown(f'<span class="share-badge">{badge}</span>', unsafe_allow_html=True)
-            with b_remove:
-                if st.button("REMOVE", key=f"unlink_{customer['user_id']}"):
-                    try:
-                        r = session.delete(f"/sharing/customers/{customer['user_id']}", token=st.session_state["token"])
-                        r.raise_for_status()
-                        session.fetch_linked_customers.clear()
-                        session.fetch_vehicles.clear()
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Could not remove customer: {e}")
     st.markdown('</div>', unsafe_allow_html=True)
+    if st.button("CUSTOMER LOOKUP", key="go_customers", use_container_width=True):
+        st.switch_page("pages/Customers.py")
+
 else:
     share_code = (_user.get("share_code") if isinstance(_user, dict) else "") or "------"
     st.markdown(
         f'<div class="share-panel">'
-        f'<div class="share-muted">YOUR SHARE ID</div>'
+        f'<div class="share-muted">YOUR ID</div>'
         f'<div class="share-code">{html.escape(share_code)}</div>'
+        f'<div style="font-size:0.75rem;color:{_fg2};margin-top:0.3rem;font-family:\'Share Tech Mono\',monospace;letter-spacing:0.08em">'
+        f'Give this to a service provider so they can find your vehicles.</div>'
         f'</div>',
         unsafe_allow_html=True,
     )
