@@ -3,7 +3,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Vehicle Detail — MIA",
+    page_title="Vehicle Detail — VEHIDOC",
     page_icon="🔧",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -82,6 +82,7 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 .stButton > button:hover {{ box-shadow: 0 0 22px {_shadow_h} !important; }}
 .stButton > button:disabled {{ opacity: 0.35 !important; box-shadow: none !important; cursor: not-allowed !important; }}
 .stNumberInput > div > div > input, .stTextInput > div > div > input, .stTextArea textarea {{ background: {_inp_bg} !important; border: 1px solid {_border} !important; border-radius: 8px !important; color: {_fg} !important; }}
+[data-testid="InputInstructions"] {{ display: none !important; }}
 </style>
 """, unsafe_allow_html=True)
 

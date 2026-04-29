@@ -3,7 +3,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Admin Console — MIA",
+    page_title="Admin Console — VEHIDOC",
     page_icon="🔧",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -72,6 +72,7 @@ html, body, [class*="css"] { font-family: 'Rajdhani', sans-serif; background-col
 
 .stSelectbox > div > div { background: #1a0a0a !important; border: 1px solid #3a1515 !important; border-radius: 8px !important; color: #f0d8d8 !important; }
 .stTextInput > div > div > input { background: #1a0a0a !important; border: 1px solid #3a1515 !important; border-radius: 8px !important; color: #f0d8d8 !important; }
+[data-testid="InputInstructions"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 

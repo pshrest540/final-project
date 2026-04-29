@@ -2,7 +2,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Service History — MIA",
+    page_title="Service History — VEHIDOC",
     page_icon="🔧",
     layout="wide",
     initial_sidebar_state="collapsed",

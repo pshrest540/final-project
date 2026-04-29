@@ -3,7 +3,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Dashboard — MIA",
+    page_title="Dashboard — VEHIDOC",
     page_icon="🔧",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -31,6 +31,8 @@ _btn_c   = "#ffffff"  if _is_biz else "#080808"
 _shadow  = "rgba(0,102,179,0.25)" if _is_biz else "rgba(255,255,255,0.07)"
 _shadow_h= "rgba(0,102,179,0.5)"  if _is_biz else "rgba(255,255,255,0.14)"
 _top     = f"linear-gradient(90deg,transparent,{_accent},transparent)"
+_inp_bg       = "#ddeaf5"            if _is_biz else "#111111"
+_inp_border   = "#85aac7"            if _is_biz else "#2a2a2a"
 _empty_bg     = "#f8fafc"            if _is_biz else "#0e0e0e"
 _empty_border = "1px dashed #c0d0e0" if _is_biz else "1px dashed #222222"
 _vin_color    = "#7a9abc"            if _is_biz else "#3a3a3a"
@@ -60,8 +62,24 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 .share-muted {{ font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: {_fg2}; letter-spacing: 0.12em; text-transform: uppercase; }}
 .share-badge {{ display:inline-block; font-family:'Share Tech Mono',monospace; font-size:0.58rem; letter-spacing:0.12em; color:{_accent}; border:1px solid {_border}; border-radius:999px; padding:0.2rem 0.5rem; margin-bottom:0.4rem; }}
 .empty-state {{ background: {_empty_bg}; border: {_empty_border}; border-radius: 10px; padding: 2rem; text-align: center; color: {_fg2}; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; margin: 1rem 0; }}
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input,
+.stTextArea > div > div > textarea {{
+    background: {_inp_bg} !important;
+    border: 1px solid {_inp_border} !important;
+    border-radius: 6px !important;
+    color: {_fg} !important;
+}}
+.stTextInput > div > div > input:focus,
+.stNumberInput > div > div > input:focus,
+.stTextArea > div > div > textarea:focus {{
+    border-color: {_accent} !important;
+    box-shadow: 0 0 0 3px {"rgba(0,102,179,0.12)" if _is_biz else "rgba(255,255,255,0.06)"} !important;
+    outline: none !important;
+}}
 .stButton > button {{ background: {_btn_g} !important; color: {_btn_c} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.8rem !important; font-weight: 700 !important; letter-spacing: 0.12em !important; border: none !important; border-radius: 8px !important; padding: 0.55rem 1rem !important; text-transform: uppercase !important; box-shadow: 0 0 15px {_shadow} !important; }}
 .stButton > button:hover {{ box-shadow: 0 0 28px {_shadow_h} !important; }}
+[data-testid="InputInstructions"] {{ display: none !important; }}
 </style>
 """, unsafe_allow_html=True)
 

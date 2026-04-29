@@ -2,7 +2,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Register — MIA",
+    page_title="Register — VEHIDOC",
     page_icon="🔧",
     layout="centered",
     initial_sidebar_state="collapsed",
@@ -184,13 +184,14 @@ html, body, [class*="css"] {
     background: linear-gradient(90deg, transparent, #1a1a1a, transparent);
     margin: 0.8rem 0;
 }
+[data-testid="InputInstructions"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Wordmark ──────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="brand-wrap">
-    <span class="brand-name">MIA</span>
+    <span class="brand-name">VEHIDOC</span>
     <div class="brand-rule"></div>
     <span class="brand-tag">Predictive Maintenance Intelligence</span>
 </div>

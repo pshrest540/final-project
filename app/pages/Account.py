@@ -3,7 +3,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Account — MIA",
+    page_title="Account — VEHIDOC",
     page_icon="🔧",
     layout="centered",
     initial_sidebar_state="collapsed",
@@ -27,7 +27,8 @@ _fg     = "#1a2a3a"  if _is_biz else "#f0f0f0"
 _fg2    = "#4a6a8a"  if _is_biz else "#555555"
 _border = "#d0dce8"  if _is_biz else "#1e1e1e"
 _card_g = "#ffffff"  if _is_biz else "#0c0c0c"
-_inp_bg = "#f8fafc"  if _is_biz else "#111111"
+_inp_bg = "#ddeaf5"  if _is_biz else "#111111"
+_inp_border = "#85aac7" if _is_biz else "#2a2a2a"
 _btn_g  = "linear-gradient(135deg,#0066b3 0%,#004d8c 100%)" if _is_biz else "#f5f5f5"
 _btn_c  = "#ffffff"  if _is_biz else "#080808"
 _shadow = "rgba(0,102,179,0.25)" if _is_biz else "rgba(255,255,255,0.07)"
@@ -49,7 +50,23 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 .danger-card {{ background: {"rgba(239,68,68,0.04)" if _is_biz else "rgba(239,68,68,0.06)"}; border: 1px solid {"#fca5a5" if _is_biz else "#3a0f0f"}; border-radius: 14px; padding: 1.5rem 2rem; margin-top: 1.5rem; }}
 .danger-title {{ font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: #ef4444; letter-spacing: 0.2em; margin-bottom: 0.6rem; }}
 .divider {{ height: 1px; background: linear-gradient(90deg,{_accent} 0%,transparent 60%); margin: 0.3rem 0 1.2rem; opacity: 0.2; }}
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input,
+.stTextArea > div > div > textarea {{
+    background: {_inp_bg} !important;
+    border: 1px solid {_inp_border} !important;
+    border-radius: 6px !important;
+    color: {_fg} !important;
+}}
+.stTextInput > div > div > input:focus,
+.stNumberInput > div > div > input:focus,
+.stTextArea > div > div > textarea:focus {{
+    border-color: {_accent} !important;
+    box-shadow: 0 0 0 3px {"rgba(0,102,179,0.12)" if _is_biz else "rgba(255,255,255,0.06)"} !important;
+    outline: none !important;
+}}
 .stButton > button {{ background: {_btn_g} !important; color: {_btn_c} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.8rem !important; font-weight: 700 !important; letter-spacing: 0.12em !important; border: none !important; border-radius: 8px !important; padding: 0.55rem 1rem !important; text-transform: uppercase !important; box-shadow: 0 0 15px {_shadow} !important; }}
+[data-testid="InputInstructions"] {{ display: none !important; }}
 </style>
 """, unsafe_allow_html=True)
 

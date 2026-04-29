@@ -62,7 +62,7 @@ app.include_router(pairing_router)
 def root():
     return {
         "status": "ok",
-        "service": "MIA Vehicle Maintenance Predictor API",
+        "service": "VEHIDOC Vehicle Maintenance Predictor API",
         "health": "/health",
         "docs": "/docs",
     }

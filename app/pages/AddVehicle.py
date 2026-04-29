@@ -2,7 +2,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Add Vehicle — MIA",
+    page_title="Add Vehicle — VEHIDOC",
     page_icon="🔧",
     layout="centered",
     initial_sidebar_state="collapsed",
@@ -46,6 +46,7 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 [data-testid="stFormSubmitButton"] > button:hover {{ box-shadow: 0 0 35px {_shadow_h} !important; }}
 .stButton > button {{ background: transparent !important; border: 1px solid {_border} !important; color: {_fg2} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.78rem !important; letter-spacing: 0.1em !important; border-radius: 8px !important; padding: 0.4rem 1rem !important; text-transform: uppercase !important; }}
 .stButton > button:hover {{ border-color: {_accent} !important; color: {_accent} !important; }}
+[data-testid="InputInstructions"] {{ display: none !important; }}
 </style>
 """, unsafe_allow_html=True)
 

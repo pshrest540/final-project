@@ -2,7 +2,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Connect — MIA",
+    page_title="Connect — VEHIDOC",
     page_icon="🔧",
     layout="centered",
     initial_sidebar_state="collapsed",

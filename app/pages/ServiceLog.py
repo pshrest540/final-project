@@ -2,7 +2,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Log Service — MIA",
+    page_title="Log Service — VEHIDOC",
     page_icon="🔧",
     layout="centered",
     initial_sidebar_state="collapsed",
@@ -54,6 +54,7 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 stTextInput > div > div > input, .stNumberInput > div > div > input, .stTextArea > div > div > textarea {{
     background: {_inp_bg} !important; color: {_fg} !important; border-color: {_border} !important;
 }}
+[data-testid="InputInstructions"] {{ display: none !important; }}
 </style>
 """, unsafe_allow_html=True)
 

@@ -2,7 +2,7 @@ import streamlit as st
 import session
 
 st.set_page_config(
-    page_title="Login — MIA",
+    page_title="Login — VEHIDOC",
     page_icon="🔧",
     layout="centered",
     initial_sidebar_state="collapsed",
@@ -35,7 +35,7 @@ html, body, [class*="css"] {
 }
 .brand-name {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 4.5rem;
+    font-size: 2.8rem;
     color: #ffffff;
     letter-spacing: 0.55em;
     margin-right: -0.55em;
@@ -156,13 +156,14 @@ html, body, [class*="css"] {
     border-color: #4a4a4a !important;
     color: #e0e0e0 !important;
 }
+[data-testid="InputInstructions"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Wordmark ──────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="brand-wrap">
-    <span class="brand-name">MIA</span>
+    <span class="brand-name">VEHIDOC</span>
     <div class="brand-rule"></div>
     <span class="brand-tag">Predictive Maintenance Intelligence</span>
 </div>

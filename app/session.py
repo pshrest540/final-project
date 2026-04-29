@@ -16,7 +16,7 @@ from requests.adapters import HTTPAdapter
 import streamlit as st
 
 API_BASE    = os.environ.get("API_BASE",    "http://localhost:8000").rstrip("/")
-API_TIMEOUT = int(os.environ.get("API_TIMEOUT", "120"))
+API_TIMEOUT = int(os.environ.get("API_TIMEOUT", "30"))
 
 
 # ── Connection-pooled session (one per server process, shared across all users) ──

@@ -83,7 +83,7 @@ with _hdr_r:
 
 st.markdown("""
 <div class="hero">
-    <div class="hero-title">name=MIA</div>
+    <div class="hero-title">name=VEHIDOC</div>
     <div class="hero-line"></div>
     <div class="hero-sub">Predictive Maintenance </div>
 </div>
