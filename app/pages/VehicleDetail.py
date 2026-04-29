@@ -83,6 +83,10 @@ html, body, [class*="css"] {{ font-family: 'Rajdhani', sans-serif; background-co
 .stButton > button:disabled {{ opacity: 0.35 !important; box-shadow: none !important; cursor: not-allowed !important; }}
 .stNumberInput > div > div > input, .stTextInput > div > div > input, .stTextArea textarea {{ background: {_inp_bg} !important; border: 1px solid {_border} !important; border-radius: 8px !important; color: {_fg} !important; }}
 [data-testid="InputInstructions"] {{ display: none !important; }}
+[data-testid="stExpander"] {{ border: 1px solid {"#2a2a2a" if not _is_biz else _border} !important; border-radius: 8px !important; background: {"#0e0e0e" if not _is_biz else "#f8fafc"} !important; }}
+details summary {{ color: {_fg} !important; font-family: 'Share Tech Mono', monospace !important; font-size: 0.75rem !important; letter-spacing: 0.15em !important; }}
+details summary:hover {{ color: {_accent} !important; }}
+details summary svg {{ fill: {_fg2} !important; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -161,8 +165,9 @@ with _col_back:
     if st.button("← BACK", key="back"):
         st.switch_page("pages/Home.py")
 with _col_analyze:
-    if st.button("⚡ ANALYZE", key="analyze", disabled=_is_shared):
-        st.switch_page("Vehicle_Input.py")
+    if not _is_biz and not _is_shared:
+        if st.button("ANALYZE", key="analyze"):
+            st.switch_page("Vehicle_Input.py")
 
 # ── Vehicle header card ───────────────────────────────────────────────────────
 _vin  = f'<div class="vh-vin">VIN: {html.escape(sv["vin"])}</div>' if sv.get("vin") else ""

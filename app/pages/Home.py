@@ -297,13 +297,6 @@ else:
                         st.rerun()
                     except Exception as e:
                         st.error(f"Could not update sharing: {e}")
-            _ba, _bd = st.columns(2)
-            with _ba:
-                if not _is_biz:
-                    if st.button("⚡ ANALYZE", key=f"analyze_{v['vehicle_id']}"):
-                        st.session_state["selected_vehicle"] = v
-                        st.switch_page("Vehicle_Input.py")
-            with _bd:
-                if st.button("DETAILS", key=f"detail_{v['vehicle_id']}"):
-                    st.session_state["selected_vehicle"] = v
-                    st.switch_page("pages/VehicleDetail.py")
+            if st.button("DETAILS", key=f"detail_{v['vehicle_id']}", use_container_width=True):
+                st.session_state["selected_vehicle"] = v
+                st.switch_page("pages/VehicleDetail.py")

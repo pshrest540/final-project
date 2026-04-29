@@ -2,7 +2,7 @@
 #Run with: uvicorn api.main:app --reload
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import predict, brands, retrain
 from api.routers.maintenance import router as maintenance_router
@@ -70,3 +70,7 @@ def root():
 @app.get("/health", tags=["Health"])
 def health_check():
     return {"status": "ok", "message": "Vehicle Maintenance API is running."}
+
+@app.head("/health", tags=["Health"])
+def health_check_head():
+    return Response(status_code=200)

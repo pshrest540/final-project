@@ -55,9 +55,9 @@ _gauge_steps  = [
     {"range": [65, 100], "color": "#f0fff4" if _is_biz else "#0a130c"},
 ]
 _comp_header_c = "#4a6a8a" if _is_biz else "#6a6a6a"
-_btn_ghost_border = _border
-_btn_ghost_c  = _fg2
-_btn_ghost_hc = _accent
+_btn_ghost_border = "#383838" if not _is_biz else _border
+_btn_ghost_c      = "#aaaaaa" if not _is_biz else _fg2
+_btn_ghost_hc     = _accent
 
 st.markdown(f"""
 <style>
@@ -183,13 +183,8 @@ def get_recommendations(dt, el, en):
 
 
 # ── UI ────────────────────────────────────────────────────────────────────────
-_return_page = st.session_state.get("results_return_page")
-_back_label = "← VEHICLE DETAIL" if _return_page == "pages/VehicleDetail.py" else "← NEW ANALYSIS"
-if st.button(_back_label):
-    if _return_page == "pages/VehicleDetail.py":
-        st.switch_page("pages/VehicleDetail.py")
-    else:
-        st.switch_page("Vehicle_Input.py")
+if st.button("← VEHICLE DETAIL"):
+    st.switch_page("pages/VehicleDetail.py")
 
 ov_color  = score_color(overall)
 ov_status = status_text(overall)

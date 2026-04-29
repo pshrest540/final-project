@@ -76,8 +76,8 @@ with _hdr_r:
     )
     _btn_h, _btn_lo = st.columns(2)
     with _btn_h:
-        if st.button("← HOME", key="back_home"):
-            st.switch_page("pages/Home.py")
+        if st.button("← DETAILS", key="back_details"):
+            st.switch_page("pages/VehicleDetail.py")
     with _btn_lo:
         if st.button("LOGOUT", key="logout"):
             st.session_state.pop("token", None)
@@ -164,7 +164,7 @@ with left:
         st.markdown("<br>", unsafe_allow_html=True)
         _, btn_col, _ = st.columns([1, 2, 1])
         with btn_col:
-            submitted = st.form_submit_button("⚡  ANALYZE VEHICLE HEALTH")
+            submitted = st.form_submit_button("ANALYZE VEHICLE HEALTH")
 
 # ── Handle submission ─────────────────────────────────────────────────────────
 if submitted:
