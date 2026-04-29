@@ -36,18 +36,18 @@ html, body, [class*="css"] { font-family: 'Rajdhani', sans-serif; background-col
 .stat-card { background: linear-gradient(135deg,#1c0a0a 0%,#220d0d 100%); border: 1px solid #3a1515; border-radius: 12px; padding: 1.4rem 1.6rem; position: relative; overflow: hidden; text-align: center; }
 .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#e53535,transparent); }
 .stat-value { font-family: 'Share Tech Mono', monospace; font-size: 2.6rem; font-weight: 700; color: #e53535; line-height: 1; }
-.stat-label { font-size: 0.72rem; color: #8a5555; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 0.3rem; }
+.stat-label { font-size: 0.72rem; color: #c09090; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 0.3rem; }
 
 /* user rows */
 .user-row { background: linear-gradient(135deg,#1a0a0a 0%,#1f0c0c 100%); border: 1px solid #3a1515; border-radius: 10px; padding: 0.9rem 1.2rem; margin-bottom: 0.5rem; position: relative; overflow: hidden; }
 .user-row::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg,transparent,#3a1515,transparent); }
 .user-email { font-family: 'Share Tech Mono', monospace; font-size: 0.82rem; color: #f0d8d8; }
-.user-name  { font-size: 0.78rem; color: #8a5555; margin-top: 0.1rem; }
+.user-name  { font-size: 0.78rem; color: #c09090; margin-top: 0.1rem; }
 .badge { display: inline-block; font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; font-weight: 700; }
 .badge-personal  { background: rgba(0,212,255,0.12); color: #00d4ff; border: 1px solid rgba(0,212,255,0.25); }
 .badge-business  { background: rgba(0,102,179,0.15); color: #4499dd; border: 1px solid rgba(0,102,179,0.3); }
 .badge-admin     { background: rgba(229,53,53,0.15);  color: #e53535; border: 1px solid rgba(229,53,53,0.3); }
-.user-meta { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: #6a3535; }
+.user-meta { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: #a87070; }
 
 /* system card */
 .sys-card { background: linear-gradient(135deg,#1a0a0a 0%,#1f0c0c 100%); border: 1px solid #3a1515; border-radius: 12px; padding: 1.6rem; position: relative; overflow: hidden; }
@@ -85,7 +85,7 @@ with _tr:
     _email = html.escape(_user.get("email", ""))
     st.markdown(
         f'<p style="text-align:right;font-family:\'Share Tech Mono\',monospace;'
-        f'font-size:0.7rem;color:#8a5555;margin:0;padding-top:0.35rem">{_email}</p>',
+        f'font-size:0.7rem;color:#c09090;margin:0;padding-top:0.35rem">{_email}</p>',
         unsafe_allow_html=True,
     )
     if st.button("LOGOUT", key="logout"):
@@ -132,7 +132,7 @@ with col_users:
                      or q in (u.get("full_name") or "").lower()
                      or q in (u.get("business_name") or "").lower()]
 
-        st.markdown(f'<p style="font-family:\'Share Tech Mono\',monospace;font-size:0.68rem;color:#6a3535;margin-bottom:0.8rem">{len(users)} USER(S) SHOWN</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="font-family:\'Share Tech Mono\',monospace;font-size:0.68rem;color:#a87070;margin-bottom:0.8rem">{len(users)} USER(S) SHOWN</p>', unsafe_allow_html=True)
 
         for u in users:
             uid        = u["user_id"]
@@ -250,7 +250,7 @@ with col_sys:
     st.markdown('<div class="section-label">// ML Models</div>', unsafe_allow_html=True)
     st.markdown('<div class="sys-card">', unsafe_allow_html=True)
     st.markdown(
-        '<p style="font-family:\'Share Tech Mono\',monospace;font-size:0.7rem;color:#8a5555;margin-bottom:1rem">'
+        '<p style="font-family:\'Share Tech Mono\',monospace;font-size:0.7rem;color:#c09090;margin-bottom:1rem">'
         'Triggers a background retrain of all three RandomForest models '
         '(engine, drivetrain, electrical). Takes several minutes. '
         'The API continues serving existing models until retraining completes.'

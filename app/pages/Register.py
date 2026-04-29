@@ -50,7 +50,7 @@ html, body, [class*="css"] {
 .brand-tag {
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.58rem;
-    color: #383838;
+    color: #888888;
     letter-spacing: 0.35em;
     text-transform: uppercase;
 }
@@ -82,7 +82,7 @@ html, body, [class*="css"] {
 .auth-card-label {
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.56rem;
-    color: #2e2e2e;
+    color: #666666;
     letter-spacing: 0.28em;
     text-transform: uppercase;
 }
@@ -91,13 +91,13 @@ html, body, [class*="css"] {
 .stTextInput label {
     font-family: 'Share Tech Mono', monospace !important;
     font-size: 0.6rem !important;
-    color: #4a4a4a !important;
+    color: #aaaaaa !important;
     letter-spacing: 0.2em !important;
     text-transform: uppercase !important;
 }
 .stTextInput > div > div > input {
-    background: #101010 !important;
-    border: 1px solid #222222 !important;
+    background: #111111 !important;
+    border: 1px solid #383838 !important;
     border-radius: 4px !important;
     color: #f0f0f0 !important;
     font-family: 'Rajdhani', sans-serif !important;
@@ -119,13 +119,13 @@ html, body, [class*="css"] {
 .stSelectbox label {
     font-family: 'Share Tech Mono', monospace !important;
     font-size: 0.6rem !important;
-    color: #4a4a4a !important;
+    color: #aaaaaa !important;
     letter-spacing: 0.2em !important;
     text-transform: uppercase !important;
 }
 .stSelectbox > div > div {
-    background: #101010 !important;
-    border: 1px solid #222222 !important;
+    background: #111111 !important;
+    border: 1px solid #383838 !important;
     border-radius: 4px !important;
     color: #f0f0f0 !important;
 }
@@ -162,8 +162,8 @@ html, body, [class*="css"] {
     width: 100%;
     text-align: center;
     background: transparent !important;
-    border: 1px solid #1e1e1e !important;
-    color: #3a3a3a !important;
+    border: 1px solid #383838 !important;
+    color: #888888 !important;
     font-family: 'Share Tech Mono', monospace !important;
     font-size: 0.66rem !important;
     letter-spacing: 0.15em !important;
@@ -206,7 +206,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Fields ────────────────────────────────────────────────────────────────────
-full_name = st.text_input("Full Name (optional)", placeholder="Jane Smith",   key="reg_name")
+full_name = st.text_input("Full Name", placeholder="Jane Smith", key="reg_name")
 email     = st.text_input("Email",                placeholder="you@example.com", key="reg_email")
 
 col_pw, col_cf = st.columns(2, gap="small")
@@ -232,6 +232,8 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("CREATE ACCOUNT"):
     errors = []
+    if not full_name.strip():
+        errors.append("Full name is required.")
     if not email:
         errors.append("Email is required.")
     if not password:
@@ -248,9 +250,7 @@ if st.button("CREATE ACCOUNT"):
             st.error(err)
     else:
         try:
-            payload = {"email": email, "password": password, "account_type": account_type}
-            if full_name:
-                payload["full_name"] = full_name
+            payload = {"email": email, "password": password, "account_type": account_type, "full_name": full_name.strip()}
             if business_name:
                 payload["business_name"] = business_name
 

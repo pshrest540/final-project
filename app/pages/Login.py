@@ -51,7 +51,7 @@ html, body, [class*="css"] {
 .brand-tag {
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.6rem;
-    color: #3d3d3d;
+    color: #888888;
     letter-spacing: 0.38em;
     text-transform: uppercase;
 }
@@ -74,7 +74,7 @@ html, body, [class*="css"] {
 .auth-card-label {
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.58rem;
-    color: #2e2e2e;
+    color: #666666;
     letter-spacing: 0.3em;
     text-transform: uppercase;
     margin-bottom: 1.4rem;
@@ -84,13 +84,13 @@ html, body, [class*="css"] {
 .stTextInput label {
     font-family: 'Share Tech Mono', monospace !important;
     font-size: 0.6rem !important;
-    color: #4a4a4a !important;
+    color: #aaaaaa !important;
     letter-spacing: 0.22em !important;
     text-transform: uppercase !important;
 }
 .stTextInput > div > div > input {
-    background: #101010 !important;
-    border: 1px solid #222222 !important;
+    background: #111111 !important;
+    border: 1px solid #383838 !important;
     border-radius: 4px !important;
     color: #f0f0f0 !important;
     font-family: 'Rajdhani', sans-serif !important;
@@ -141,8 +141,8 @@ html, body, [class*="css"] {
     width: 100%;
     text-align: center;
     background: transparent !important;
-    border: 1px solid #1e1e1e !important;
-    color: #3a3a3a !important;
+    border: 1px solid #383838 !important;
+    color: #888888 !important;
     font-family: 'Share Tech Mono', monospace !important;
     font-size: 0.66rem !important;
     letter-spacing: 0.15em !important;
@@ -153,7 +153,7 @@ html, body, [class*="css"] {
     transition: border-color 0.15s, color 0.15s !important;
 }
 [data-testid="stLinkButton"] > a:hover {
-    border-color: #4a4a4a !important;
+    border-color: #aaaaaa !important;
     color: #e0e0e0 !important;
 }
 [data-testid="InputInstructions"] { display: none !important; }

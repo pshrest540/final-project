@@ -97,7 +97,7 @@ class RetrainResponse(BaseModel):
 class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=128)
-    full_name: Optional[str] = Field(None, max_length=100)
+    full_name: str = Field(..., min_length=1, max_length=100)
     account_type: Optional[str] = "personal"
     business_name: Optional[str] = Field(None, max_length=255)
 
